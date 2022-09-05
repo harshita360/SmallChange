@@ -58,4 +58,8 @@ export class UserServiceService {
     this.users.push(user)
     return of(user)
   }
+
+  logout(){
+    this.loggedInUser=undefined
+  }
 }

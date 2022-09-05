@@ -10,6 +10,7 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { LogintextComponent } from './logintext/logintext.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { FormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,8 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule
+    NgbModule,
+    FormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

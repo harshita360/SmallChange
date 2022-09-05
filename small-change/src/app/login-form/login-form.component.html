@@ -2,13 +2,13 @@
     <form>
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username">
+            <input type="text" class="form-control" id="username" [(ngModel)]="userName" name="username" >
         </div>
         <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <input type="text" class="form-control" id="password">
+            <label for="password" class="form-label"  >Password</label>
+            <input type="password" class="form-control" name="password" [(ngModel)]="password" id="password">
         </div>
-        <button type="button" >Log in</button>
+        <button type="button" (click)="login()" >Log in</button>
         <div class="fpwd">
             <a href="#">Forgot your password?</a>
         </div>
