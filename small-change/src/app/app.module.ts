@@ -11,6 +11,7 @@ import { LogintextComponent } from './logintext/logintext.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { FormsModule } from '@angular/forms';
+import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { FormsModule } from '@angular/forms';
     NavigationComponent,
     LogintextComponent,
     LoginFormComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    PortfolioPageComponent
   ],
   imports: [
     BrowserModule,

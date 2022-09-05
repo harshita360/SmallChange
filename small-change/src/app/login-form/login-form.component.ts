@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { UserServiceService } from '../services/user-service.service';
 
 @Component({
@@ -12,7 +13,7 @@ export class LoginFormComponent implements OnInit {
   password:string='';
 
 
-  constructor(private userService:UserServiceService) { }
+  constructor(private userService:UserServiceService,private route:ActivatedRoute) { }
 
   ngOnInit(): void {
   }
@@ -20,6 +21,7 @@ export class LoginFormComponent implements OnInit {
   login(){
     if(this.userService.authenticateUser(this.userName,this.password)){
       alert('Logged In Successful');
+      //this.route.n
     }else{
       alert('User Name or password wrong')
     }

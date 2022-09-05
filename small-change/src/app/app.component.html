@@ -1,5 +1,5 @@
 <app-header-logo></app-header-logo>
-<app-navigation></app-navigation>
+<app-navigation *ngIf="isLoggedIn()" ></app-navigation>
 <app-login-page></app-login-page>
 <hr>
 <app-footer-bar></app-footer-bar>
