@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { User } from '../models/user';
 import * as uuid from "uuid";
 
@@ -52,7 +52,7 @@ export class UserServiceService {
   registerNewUser(user:User):  Observable<User> {
     const existinUser=this.users.find(u => u.email===user.email);
     if(existinUser){
-      throw new Error('Already logged in user');
+      return throwError(()=> 'Already user with is email present')
     }
     user.userId=uuid.v4()
     this.users.push(user)
