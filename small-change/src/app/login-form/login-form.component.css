@@ -6,15 +6,19 @@ form{
     padding:16px;
 }
 
-
 .box{
+  border: 3px solid #a9a9a9;
+  padding: 16px;
+}
+
+/* .box{
     margin-top: 3%;
     margin-right: 35%;
     margin-left: 35%;
     margin-bottom: 3%;
     border: 0.5px solid #a9a9a9;
     align-self: center;
-}
+} */
 
 .fpwd{
     text-align: center;
