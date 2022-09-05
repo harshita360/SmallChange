@@ -1,0 +1,32 @@
+nav{
+  background-color: #f2f2f2;
+  font-family: 'Fidelity Sans', arial, sans-serif;
+  font-size: 18px;
+  
+}
+
+
+.nav-item{
+    line-height: 1.5em;
+  box-sizing: content-box;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+a{
+    color:#356F95
+}
+a:visited{
+    color: #5C0198;
+  }
+  a:hover{
+    color:black;
+  }
+  a:focus{
+    outline-style: dotted;
+    outline-color: #ccc;
+    outline-width: 1px;
+  }
+  

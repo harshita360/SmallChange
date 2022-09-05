@@ -6,12 +6,16 @@ import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HeaderLogoComponent } from './header-logo/header-logo.component';
 import { FooterBarComponent } from './footer-bar/footer-bar.component';
+import { NavigationComponent } from './navigation/navigation.component';
+import { LogintextComponent } from './logintext/logintext.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HeaderLogoComponent,
-    FooterBarComponent
+    FooterBarComponent,
+    NavigationComponent,
+    LogintextComponent
   ],
   imports: [
     BrowserModule,
