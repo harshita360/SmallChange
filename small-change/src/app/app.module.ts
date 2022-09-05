@@ -8,6 +8,7 @@ import { HeaderLogoComponent } from './header-logo/header-logo.component';
 import { FooterBarComponent } from './footer-bar/footer-bar.component';
 import { NavigationComponent } from './navigation/navigation.component';
 import { LogintextComponent } from './logintext/logintext.component';
+import { LoginFormComponent } from './login-form/login-form.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { LogintextComponent } from './logintext/logintext.component';
     HeaderLogoComponent,
     FooterBarComponent,
     NavigationComponent,
-    LogintextComponent
+    LogintextComponent,
+    LoginFormComponent
   ],
   imports: [
     BrowserModule,

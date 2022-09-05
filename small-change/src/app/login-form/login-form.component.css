@@ -1,0 +1,42 @@
+form{
+    border:3px solid #ffffff;
+}
+
+.wrapper{
+    padding:16px;
+}
+
+
+.box{
+    margin-top: 3%;
+    margin-right: 35%;
+    margin-left: 35%;
+    margin-bottom: 3%;
+    border: 0.5px solid #a9a9a9;
+    align-self: center;
+}
+
+.fpwd{
+    text-align: center;
+}
+
+.form-label{
+    font-weight:bold;
+    font-family: 'Fidelity Sans', Arial, sans-serif;
+}
+
+button{
+    background-color: #64943E;
+    color:white;
+    padding:14px 20px;
+    margin:8px 0;
+    width:100%;
+    border: none;
+    outline: none;
+    font-family: 'Fidelity Sans', Arial, sans-serif;
+}
+
+
+
+
+
