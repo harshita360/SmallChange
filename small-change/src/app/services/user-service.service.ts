@@ -62,4 +62,8 @@ export class UserServiceService {
   logout(){
     this.loggedInUser=undefined
   }
+
+  getLoginUserId():string|undefined{
+    return this.loggedInUser?.userId;
+  }
 }

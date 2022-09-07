@@ -10,8 +10,9 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { LogintextComponent } from './logintext/logintext.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule} from '@angular/forms';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
+import { TradeModule } from './trade/trade.module';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-pag
     BrowserModule,
     AppRoutingModule,
     NgbModule,
-    FormsModule
+    FormsModule,
+    TradeModule
   ],
   providers: [],
   bootstrap: [AppComponent]

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { map, mergeMap, Observable, of, tap } from 'rxjs';
+import { delay, map, mergeMap, Observable, of, tap } from 'rxjs';
 import { Instrument } from '../models/instrument';
 import { InstrumentCategory } from '../models/instrument-category';
 import { InstrumentPrice } from '../models/instrument-price';
@@ -82,7 +82,7 @@ export class InstrumentService {
       instrument:this.instruments[2],
     },
     {
-      'instrumentId':'123-123-456',
+      'instrumentId':'123-456-456',
       askPrice:180,
       bidPrice:182.12,
       timestamp:new Date(Date.now()),
@@ -105,13 +105,16 @@ export class InstrumentService {
       mergeMap(data=> {
         let instrumentIds:string[]=data.map(i => i.instrumentId);
         return this.getTheInstrumentPriceDetails(instrumentIds).pipe(
-          map(prices=> { return prices;})
+          map(prices=> { return prices;}),
+          delay(2000)
         )
       })
     )
   }
 
   getTheInstrumentPriceDetails(instrumentIds:string[]): Observable<InstrumentPrice[]>{
-    return of(this.instrumentPrices.filter( ip => instrumentIds.includes(ip.instrumentId)))
+    return of(this.instrumentPrices.filter( ip => instrumentIds.includes(ip.instrumentId))).pipe(
+      delay(2000)
+    )
   }
 }

@@ -8,7 +8,7 @@ import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-pag
 const routes: Routes = [
   {path:'login',component:LoginPageComponent,canActivate:[NotLoggedInGuard]},
   {path:'portfolio',component:PortfolioPageComponent,canActivate:[IsLoggedInGuard]},
-  {path:'',redirectTo:'/login',pathMatch:'full'},
+  {path:'',redirectTo:'/login',pathMatch:'full'}
 ];
 
 @NgModule({
