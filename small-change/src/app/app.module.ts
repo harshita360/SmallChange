@@ -13,6 +13,7 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { FormsModule} from '@angular/forms';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
 import { TradeModule } from './trade/trade.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { TradeModule } from './trade/trade.module';
     AppRoutingModule,
     NgbModule,
     FormsModule,
-    TradeModule
+    TradeModule,
+    BrowserAnimationsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

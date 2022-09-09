@@ -17,6 +17,8 @@ export class TradeService {
     if(userId){
       order.setClientId(userId);
       order.serOrderId(uuid.v4())
+      // need to connect to portfolio service to update profile information
+      // need to connect to transaction service to add this to transaction
       return of(order).pipe(
         delay(3000)
       )

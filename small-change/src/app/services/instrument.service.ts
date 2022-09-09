@@ -106,7 +106,7 @@ export class InstrumentService {
         let instrumentIds:string[]=data.map(i => i.instrumentId);
         return this.getTheInstrumentPriceDetails(instrumentIds).pipe(
           map(prices=> { return prices;}),
-          delay(2000)
+          delay(1000)
         )
       })
     )
@@ -114,7 +114,7 @@ export class InstrumentService {
 
   getTheInstrumentPriceDetails(instrumentIds:string[]): Observable<InstrumentPrice[]>{
     return of(this.instrumentPrices.filter( ip => instrumentIds.includes(ip.instrumentId))).pipe(
-      delay(2000)
+      delay(1000)
     )
   }
 }

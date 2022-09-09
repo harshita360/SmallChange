@@ -94,7 +94,8 @@ describe('InstrumentService', () => {
 
       let returnedInstruments: InstrumentPrice[]=[]
       service.getInstrumentsByCategory('3').subscribe(data=> returnedInstruments=data);
-      tick()
+      tick(4000)
+      console.log(returnedInstruments)
       expect(returnedInstruments.length).toEqual(1)
       expect(returnedInstruments[0].instrument.instrumentId).toBe('123-123-098')
 

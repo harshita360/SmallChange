@@ -6,6 +6,7 @@ import { InstrumentPrice } from 'src/app/models/instrument-price';
 import { Order } from 'src/app/models/order';
 import { InstrumentService } from 'src/app/services/instrument.service';
 import { TradeService } from '../trade.service';
+import {NgxSpinnerService} from 'ngx-spinner'
 
 @Component({
   selector: 'app-buy-instrument',
@@ -13,6 +14,8 @@ import { TradeService } from '../trade.service';
   styleUrls: ['./buy-instrument.component.css']
 })
 export class BuyInstrumentComponent implements OnInit {
+
+  loaderMessage:string=''
 
   errorMessage :{[key:string]:string} ={
     'portfolioId':'',
@@ -53,7 +56,8 @@ export class BuyInstrumentComponent implements OnInit {
   maxQuantityCanBuy:number=0;
 
   constructor(private router:Router,private formBuilder:FormBuilder,
-    private instrumentService:InstrumentService,private tradeService:TradeService) {
+    private instrumentService:InstrumentService,private tradeService:TradeService,
+    private spinnerSerice:NgxSpinnerService) {
     this.buyInstrumentForm=formBuilder.group({
       'portfolioId':['',Validators.required],
       'instrumentCategoryId':[{value:'',disabled:true}, Validators.required],
@@ -76,6 +80,8 @@ export class BuyInstrumentComponent implements OnInit {
 
     this.buyInstrumentForm.get('instrumentCategoryId')?.valueChanges.subscribe(categoryId=>{
       this.disableInstrumentSelect()
+      this.loaderMessage=`instruments of selected category loading`
+      this.spinnerSerice.show()
       this.buyInstrumentForm.get('instrumentId')?.setValue('')
         this.buyInstrumentForm.get('instrumentId')?.updateValueAndValidity();
         this.buyInstrumentForm.get('quantity')?.setValue(0);
@@ -92,6 +98,7 @@ export class BuyInstrumentComponent implements OnInit {
         this.selectedInstrument=undefined;
         this.enableInstrumentSelect()
         this.canFormBeSubmitted=true
+        this.spinnerSerice.hide()
       })
     })
 
@@ -208,13 +215,17 @@ export class BuyInstrumentComponent implements OnInit {
   }
 
   buyInstrument(){
+    this.loaderMessage=`Instrument ${this.selectedInstrument?.instrument.description} buy request id submited waiting for respons`
+    this.spinnerSerice.show()
     const order=new Order(
       this.buyInstrumentForm.value['instrumentId'],
       this.buyInstrumentForm.value['quantity'],
       this.buyInstrumentForm.get('targetPrice')?.value,
       this.buyInstrumentForm.value['portfolioId'],'B')
     this.tradeService.buyAInstrument(order).subscribe(re=>{
-      console.log("sosrder submitted", re)
+      console.log("order submitted", re)
+      this.spinnerSerice.hide()
+      this.router.navigate(['/portfolio'])
     })
   }
 
