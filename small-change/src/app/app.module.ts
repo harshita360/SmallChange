@@ -14,6 +14,8 @@ import { FormsModule} from '@angular/forms';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
 import { TradeModule } from './trade/trade.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastComponent } from './toast/toast.component';
+import { ToastModule } from './toast/toast.module';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     LogintextComponent,
     LoginFormComponent,
     LoginPageComponent,
-    PortfolioPageComponent
+    PortfolioPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -32,7 +34,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     NgbModule,
     FormsModule,
     TradeModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    ToastModule
   ],
   providers: [],
   bootstrap: [AppComponent]
