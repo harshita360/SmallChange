@@ -1,0 +1,49 @@
+<div class="card">
+  <div class="card-header">
+    <div class="card-title">Edit Investment preference</div>
+  </div>
+  <div class="card-body container-fluid">
+    <form (ngSubmit)="updateMyPreference()" [formGroup]="preferenceForm" class="row g-3">
+      <div class="col-md-6">
+        <label for="investmentPurpose" class="form-label">Investment Purpose</label>
+        <input type="email" class="form-control" id="investmentPurpose" formControlName="investmentPurpose">
+      </div>
+      <div class="col-md-6">
+        <label for="riskTolerance" class="form-label">Rish Tolerance</label>
+        <select type="email" class="form-control" id="riskTolerance" formControlName="riskTolerance">
+          <option value="CONSERVATIVE" selected>CONSERVATIVE </option>
+          <option value="BELOW AVERAGE">BELOW AVERAGE </option>
+          <option value="AVERAGE">AVERAGE </option>
+          <option value="ABOVE AVERAGE">ABOVE AVERAGE  </option>
+          <option value="AGGRESSIVE">AGGRESSIVE </option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="incomeCategory" class="form-label">Income Category</label>
+        <select type="email" class="form-control" id="incomeCategory" formControlName="incomeCategory">
+        <option value="0 - 20,000" selected>  0 - 20,000 </option>
+        <option value="20,001 - 40,000">  20,001 - 40,000 </option>
+        <option value="40,001 - 60,000">  40,001 - 60,000 </option>
+        <option value="60,001 - 80,000">  60,001 - 80,000 </option>
+        <option value="80,001 - 100,000">  80,001 - 100,000 </option>
+        <option value="100,001 - 150,000">  100,001 - 150,000 </option>
+        <option value="150,000+">  150,000+ </option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label for="lengthOfInvestment" class="form-label">Length of Investment</label>
+        <select type="email" class="form-control" id="lengthOfInvestment" formControlName="lengthOfInvestment">
+          <option value="0-5 years" selected> 0-5 years </option>
+          <option value="5-7 years"> 5-7 years </option>
+          <option value="7-10 years"> 7-10 years </option>
+          <option value="10-15 years"> 10-15 years </option>
+        </select>
+      </div>
+    </form>
+  </div>
+  <div class="card-footer" style="text-align: center;">
+    <button (click)="updateMyPreference()" style="margin-right:10px;" [disabled]="!preferenceForm.valid" class="btn btn-success">Save My Preference</button>
+    <button style="margin-right:10px;" class="btn btn-danger">Reset</button>
+    <button style="margin-right:10px;" class="btn btn-warning">Go Back</button>
+  </div>
+</div>

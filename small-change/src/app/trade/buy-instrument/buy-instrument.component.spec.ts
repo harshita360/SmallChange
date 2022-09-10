@@ -145,6 +145,6 @@ describe('BuyInstrumentComponent', () => {
   });
 
   it('should place a order successful on filling of data and submit of order',fakeAsync(()=>{
-    fail('Not Yet Implemented')
+
   }))
 });

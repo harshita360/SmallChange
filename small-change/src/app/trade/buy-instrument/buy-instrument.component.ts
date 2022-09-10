@@ -71,14 +71,21 @@ export class BuyInstrumentComponent implements OnInit {
    }
 
   ngOnInit(): void {
+
+    // executing when the suer changes to another portfolio
     this.buyInstrumentForm.get('portfolioId')?.valueChanges.subscribe(portfolioId=>{
       this.currentPortfolio=this.portfolios.find(p => p.id==portfolioId);
       this.validateInstrumentBuyEligibility();
       this.enableInstrumentCategorySelect();
-      this.serErrorOfControl('portfolioId')
+      this.setErrorOfControl('portfolioId')
     })
 
     this.buyInstrumentForm.get('instrumentCategoryId')?.valueChanges.subscribe(categoryId=>{
+
+      if(categoryId==''){
+        return
+      }
+
       this.disableInstrumentSelect()
       this.loaderMessage=`instruments of selected category loading`
       this.spinnerSerice.show()
@@ -87,8 +94,8 @@ export class BuyInstrumentComponent implements OnInit {
         this.buyInstrumentForm.get('quantity')?.setValue(0);
         this.buyInstrumentForm.get('quantity')?.updateValueAndValidity();
         this.buyInstrumentForm.updateValueAndValidity();
-        this.serErrorOfControl('instrumentId')
-        this.serErrorOfControl('instrumentCategoryId')
+        this.setErrorOfControl('instrumentId')
+        this.setErrorOfControl('instrumentCategoryId')
         this.disableQuantity()
         this.selectedInstrument=undefined;
         this.canFormBeSubmitted=false;
@@ -104,8 +111,8 @@ export class BuyInstrumentComponent implements OnInit {
 
     this.buyInstrumentForm.get('instrumentId')?.valueChanges.subscribe(instrumentId=>{
       this.validateInstrumentBuyEligibility();
-      this.serErrorOfControl('instrumentId')
-      this.serErrorOfControl('quantity')
+      this.setErrorOfControl('instrumentId')
+      this.setErrorOfControl('quantity')
     })
 
     this.buyInstrumentForm.get('quantity')?.valueChanges.subscribe(newQuantity=>{
@@ -113,7 +120,7 @@ export class BuyInstrumentComponent implements OnInit {
         this.buyInstrumentForm.get('targetPrice')?.setValue(newQuantity*this.selectedInstrument.askPrice)
         this.buyInstrumentForm.get('targetPrice')?.updateValueAndValidity()
         this.buyInstrumentForm.updateValueAndValidity()
-        this.serErrorOfControl('quantity')
+        this.setErrorOfControl('quantity')
       }
     })
 
@@ -125,7 +132,12 @@ export class BuyInstrumentComponent implements OnInit {
   }
 
   validateInstrumentBuyEligibility() {
-    if(this.buyInstrumentForm.get('instrumentId')?.value){
+
+    if(! this.buyInstrumentForm.get('instrumentCategoryId')?.valid || ! this.buyInstrumentForm.get('instrumentId')?.valid){
+      return;
+    }
+
+    if(this.buyInstrumentForm.get('instrumentId')?.value!=''){
       const instrumentId=this.buyInstrumentForm.get('instrumentId')?.value
       const instrumentDetails=this.instrumentsOfCategory.find(i=> i.instrumentId==instrumentId)
       if(!instrumentDetails){
@@ -196,7 +208,7 @@ export class BuyInstrumentComponent implements OnInit {
     this.buyInstrumentForm.get('instrumentCategoryId')?.enable()
   }
 
-  serErrorOfControl(controlName:string){
+  setErrorOfControl(controlName:string){
     let control:AbstractControl| null =this.buyInstrumentForm.get(controlName)
     if(!control){
       return
