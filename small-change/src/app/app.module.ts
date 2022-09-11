@@ -14,7 +14,7 @@ import { FormsModule} from '@angular/forms';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
 import { TradeModule } from './trade/trade.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastComponent } from './toast/toast.component';
+import {HttpClientModule} from '@angular/common/http'
 import { ToastModule } from './toast/toast.module';
 import { InvestmentPreferenceModule } from './investment-preference/investment-preference.module';
 
@@ -37,7 +37,8 @@ import { InvestmentPreferenceModule } from './investment-preference/investment-p
     TradeModule,
     BrowserAnimationsModule,
     ToastModule,
-    InvestmentPreferenceModule
+    InvestmentPreferenceModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

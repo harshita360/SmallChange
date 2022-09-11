@@ -8,6 +8,22 @@
   box-shadow: 0 0 0 0.25rem rgba(253, 13, 13, 0.25);
 }
 
+select.ng-valid{
+  border-left: 5px solid green;
+}
+
+input.ng-valid{
+  border-left: 5px solid green;
+}
+
+select.ng-invalid.ng-touched{
+  border-left: 5px solid red;
+}
+
+input.ng-invalid.ng-touched{
+  border-left: 5px solid red;
+}
+
 /* css for custom slider */
 .slider {
   -webkit-appearance: none;

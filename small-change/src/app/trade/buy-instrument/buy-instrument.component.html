@@ -48,7 +48,7 @@
                 Instrument Description :
               </div>
               <div class="col-12 col-md">
-                {{selectedInstrument.instrument.description}}
+                {{selectedInstrument.instrument.instrumentDescription}}
               </div>
             </div>
             <div class="row">
@@ -82,8 +82,8 @@
           </div>
         </div>
         <div class="row mb-3">
-          <label class="col-12 col-sm-7 col-md-4">Quantity: </label>
-          <div class="col-12 col-sm-4 col-md">
+          <label class="col-12 col-sm-4 col-md-2">Quantity: </label>
+          <div class="col-12 col-sm col-md">
             <input formControlName="quantity" type="number" step="1" [attr.min]="selectedInstrument?.instrument?.minQuantity" [attr.max]="maxQuantityCanBuy"   class="form-control" [ngClass]="{ 'invalid-form-control': errorMessage['quantity'] }" id="myRange" aria-describedby="trade-quantity-value">
             <div class="error-text" *ngIf="errorMessage['quantity']">
               {{errorMessage['quantity']}}
@@ -91,9 +91,9 @@
           </div>
         </div>
         <div class="row mb-1">
-          <label class="col-12 col-sm-7 col-md-4">Target Price: </label>
-          <div class="col-12 col-sm-4 col-md">
-            <input formControlName="targetPrice" type="number" >
+          <label class="col-12 col-sm-4 col-md-2">Target Price: </label>
+          <div class="col-12 col-sm col-md">
+            <input class="form-control" formControlName="targetPrice" type="number" >
           </div>
         </div>
       </div>

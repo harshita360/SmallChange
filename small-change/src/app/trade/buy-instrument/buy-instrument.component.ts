@@ -80,25 +80,41 @@ export class BuyInstrumentComponent implements OnInit {
       this.setErrorOfControl('portfolioId')
     })
 
+    // loding the data when the user selects a particular category
     this.buyInstrumentForm.get('instrumentCategoryId')?.valueChanges.subscribe(categoryId=>{
 
       if(categoryId==''){
         return
       }
 
+      // disabling the instrument selct
       this.disableInstrumentSelect()
+
+      // set loader message
       this.loaderMessage=`instruments of selected category loading`
+
+      // start loader
       this.spinnerSerice.show()
+
+      // set the value of selected instrument to be empty
       this.buyInstrumentForm.get('instrumentId')?.setValue('')
         this.buyInstrumentForm.get('instrumentId')?.updateValueAndValidity();
+
+        // set the quantity to be 0 as default
         this.buyInstrumentForm.get('quantity')?.setValue(0);
         this.buyInstrumentForm.get('quantity')?.updateValueAndValidity();
         this.buyInstrumentForm.updateValueAndValidity();
+
+        // load the error message sof the instrument and category
         this.setErrorOfControl('instrumentId')
         this.setErrorOfControl('instrumentCategoryId')
+
+        // if the quantity is eanbled disable it
         this.disableQuantity()
         this.selectedInstrument=undefined;
         this.canFormBeSubmitted=false;
+
+        // load the data for the category id selected
       this.instrumentService.getInstrumentsByCategory(categoryId).subscribe( data=>{
        // console.log('instruments receied',data)
         this.instrumentsOfCategory=data;
@@ -109,35 +125,40 @@ export class BuyInstrumentComponent implements OnInit {
       })
     })
 
+
+    // updating the form when the user selects an instrument
     this.buyInstrumentForm.get('instrumentId')?.valueChanges.subscribe(instrumentId=>{
       this.validateInstrumentBuyEligibility();
+
+      // set the error messages
       this.setErrorOfControl('instrumentId')
       this.setErrorOfControl('quantity')
     })
 
     this.buyInstrumentForm.get('quantity')?.valueChanges.subscribe(newQuantity=>{
       if(this.selectedInstrument){
-        this.buyInstrumentForm.get('targetPrice')?.setValue(newQuantity*this.selectedInstrument.askPrice)
-        this.buyInstrumentForm.get('targetPrice')?.updateValueAndValidity()
-        this.buyInstrumentForm.updateValueAndValidity()
         this.setErrorOfControl('quantity')
       }
     })
-
-
   }
 
+  // checking whether the user has the uy eligibility
   checkInstrumentByability(instrument:InstrumentPrice):boolean{
     return this.currentPortfolio.balance > instrument.askPrice*instrument.instrument.minQuantity;
   }
 
+  // validating whether the user can buy and what culd be the max and min quantity
   validateInstrumentBuyEligibility() {
 
+    // if the value is not yet selected then return
     if(! this.buyInstrumentForm.get('instrumentCategoryId')?.valid || ! this.buyInstrumentForm.get('instrumentId')?.valid){
       return;
     }
 
+    // if an instrument is selected
     if(this.buyInstrumentForm.get('instrumentId')?.value!=''){
+
+      // get all the instrument detals of the selected instrument
       const instrumentId=this.buyInstrumentForm.get('instrumentId')?.value
       const instrumentDetails=this.instrumentsOfCategory.find(i=> i.instrumentId==instrumentId)
       if(!instrumentDetails){
@@ -149,13 +170,26 @@ export class BuyInstrumentComponent implements OnInit {
         return
       }
       const instrument:InstrumentPrice=instrumentDetails;
+
+      // if the user can buy
     if(this.checkInstrumentByability(instrument)){
       this.selectedInstrument=instrument
+
+      // calculating the buying capacity for the user
       const maxQuantity=Math.floor(this.currentPortfolio.balance/instrument.askPrice)
+
+      // set the max quantity the user can buy to min of user capability and max quantity that user can buy for an instrument
       this.maxQuantityCanBuy=Math.min(maxQuantity,instrument.instrument.maxQuantity);
       this.setQuantityAndUpdate(instrument.instrument.minQuantity,instrument.instrument.minQuantity,this.maxQuantityCanBuy)
       this.buyInstrumentForm.updateValueAndValidity()
+
+      // enable quantity field
       this.enableQuantity()
+
+      // set the target price
+      this.buyInstrumentForm.get('targetPrice')?.setValue(instrument.askPrice)
+      this.buyInstrumentForm.get('targetPrice')?.updateValueAndValidity()
+      this.buyInstrumentForm.updateValueAndValidity()
     }else{
       this.buyInstrumentForm.patchValue({
         'instrumentId':''}
@@ -227,7 +261,7 @@ export class BuyInstrumentComponent implements OnInit {
   }
 
   buyInstrument(){
-    this.loaderMessage=`Instrument ${this.selectedInstrument?.instrument.description} buy request id submited waiting for respons`
+    this.loaderMessage=`Instrument ${this.selectedInstrument?.instrument.instrumentDescription} buy request id submited waiting for respons`
     this.spinnerSerice.show()
     const order=new Order(
       this.buyInstrumentForm.value['instrumentId'],

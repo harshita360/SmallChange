@@ -3,7 +3,7 @@ export class Order {
   quantity:number=0;
   targetPrice:number=0;
   direction:string='';
-  clientId:string='';
+  clientId:number=NaN;
   orderId:string='';
   portfolioId:string='';
   constructor(instrumentId:string,quantity:number,targetPrice:number,portfolioId:string,direction:string){
@@ -14,7 +14,7 @@ export class Order {
     this.direction=direction
   }
 
-  setClientId(clientId:string){
+  setClientId(clientId:number){
     this.clientId=clientId
   }
 

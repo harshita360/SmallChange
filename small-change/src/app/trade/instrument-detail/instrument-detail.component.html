@@ -1,4 +1,4 @@
-<p> {{instrument?.instrument?.description}} --
+<p> {{instrument?.instrument?.instrumentDescription}} --
   <span *ngIf="type==='buy'">{{instrument?.askPrice | currency:'USD'}}</span>
   <span *ngIf="type==='sell'">{{instrument?.bidPrice | currency:'USD'}}</span>
 </p>
