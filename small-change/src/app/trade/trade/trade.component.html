@@ -3,12 +3,6 @@
     <h2>Trade</h2>
   </div>
   <div class="row">
-    <div class="col-12" style="text-align: center;" >
-      <a id="buy-trade-link" class="btn btn-primary" [routerLink]="['./','buy']"  >Buy Instrument</a>
-      <a class="btn btn-primary" [routerLink]="['./','sell']">Sell Instrument</a>
-    </div>
-  </div>
-  <div class="row">
-    <router-outlet></router-outlet>
+    <app-order-instrument></app-order-instrument>
   </div>
 </div>

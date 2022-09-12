@@ -12,15 +12,15 @@ select.ng-valid{
   border-left: 5px solid green;
 }
 
-input.ng-valid{
+input.ng-valid:not([type~='radio']){
   border-left: 5px solid green;
 }
 
-select.ng-invalid.ng-touched{
+select.ng-invalid.ng-touched:not([type~='radio']){
   border-left: 5px solid red;
 }
 
-input.ng-invalid.ng-touched{
+input.ng-invalid.ng-touched:not([type~='radio']){
   border-left: 5px solid red;
 }
 
