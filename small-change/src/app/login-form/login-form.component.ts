@@ -19,12 +19,15 @@ export class LoginFormComponent implements OnInit {
   }
 
   login(){
-    if(this.userService.authenticateUser(this.userName,this.password)){
-      alert('Logged In Successful');
-      this.router.navigate(['/portfolio']);
-    }else{
-      alert('User Name or password wrong')
-    }
+
+    this.userService.authenticateUser(this.userName,this.password).subscribe(data=>{
+      if(data){
+        alert('Logged In Successful');
+        this.router.navigate(['/portfolio']);
+      }else{
+        alert('User Name or password wrong')
+      }
+    })
 
   }
 

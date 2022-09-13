@@ -6,7 +6,7 @@ export class InstrumentPrice {
     public instrumentId:string,
     public bidPrice:number,
     public askPrice:number,
-    public timestamp:Date,
+    public priceTimestamp:Date,
     public instrument:Instrument
   ){}
 }

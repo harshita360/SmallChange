@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { UserServiceService } from './services/user-service.service';
-import { ToastService } from './toast/toast.service';
 
 @Component({
   selector: 'app-root',
@@ -9,15 +8,11 @@ import { ToastService } from './toast/toast.service';
 })
 export class AppComponent {
 
-  constructor(private userService:UserServiceService,private toastService:ToastService){}
+  constructor(private userService:UserServiceService){}
 
   title = 'small-change';
 
   isLoggedIn():boolean{
     return this.userService.isLoggedIn()
-  }
-
-  showToast(){
-    this.toastService.show('I am a success toast', { classname: 'bg-danger text-light', delay: 10000 });
   }
 }

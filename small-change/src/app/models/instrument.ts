@@ -1,6 +1,6 @@
 export class Instrument {
   constructor(public instrumentId:string ,
-  public description:string ,
+  public instrumentDescription:string ,
   public externalIdType:string,
   public externalId:string ,
   public categoryId:string,

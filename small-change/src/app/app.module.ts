@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-
+import {HttpClientModule} from "@angular/common/http";
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -14,9 +14,13 @@ import { FormsModule} from '@angular/forms';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
 import { TradeModule } from './trade/trade.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { ToastComponent } from './toast/toast.component';
 import { ToastModule } from './toast/toast.module';
+<<<<<<< HEAD
 import { ActivityModule } from './activity/activity.module';
+=======
+import { InvestmentPreferenceModule } from './investment-preference/investment-preference.module';
+import { LogOutComponent } from './log-out/log-out.component';
+>>>>>>> origin/nikhil
 
 @NgModule({
   declarations: [
@@ -28,6 +32,7 @@ import { ActivityModule } from './activity/activity.module';
     LoginFormComponent,
     LoginPageComponent,
     PortfolioPageComponent,
+    LogOutComponent,
   ],
   imports: [
     BrowserModule,
@@ -37,7 +42,12 @@ import { ActivityModule } from './activity/activity.module';
     TradeModule,
     BrowserAnimationsModule,
     ToastModule,
+<<<<<<< HEAD
     ActivityModule
+=======
+    InvestmentPreferenceModule,
+    HttpClientModule
+>>>>>>> origin/nikhil
   ],
   providers: [],
   bootstrap: [AppComponent]

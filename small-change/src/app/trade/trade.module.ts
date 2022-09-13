@@ -1,7 +1,7 @@
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { TradeComponent } from './trade/trade.component';
-import { BuyInstrumentComponent } from './buy-instrument/buy-instrument.component';
+import { OrderInstrumentComponent } from './order-instrument/order-instrument.component';
 import { Route, RouterModule } from '@angular/router';
 import { IsLoggedInGuard } from '../guards/is-logged-in.guard';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -10,15 +10,13 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const tradeRoutes: Route[]=[
-  {path:'trade', component: TradeComponent, canActivate:[IsLoggedInGuard], children:[
-    {path:'buy',component:BuyInstrumentComponent}
-  ]}
+  {path:'trade', component: TradeComponent, canActivate:[IsLoggedInGuard]}
 ]
 
 @NgModule({
   declarations: [
     TradeComponent,
-    BuyInstrumentComponent,
+    OrderInstrumentComponent,
     InstrumentDetailComponent
   ],
   imports: [

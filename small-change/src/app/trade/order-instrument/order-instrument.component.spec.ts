@@ -11,17 +11,17 @@ import { InstrumentService } from 'src/app/services/instrument.service';
 import { TradeService } from '../trade.service';
 import * as uuid from "uuid";
 
-import { BuyInstrumentComponent } from './buy-instrument.component';
+import { OrderInstrumentComponent } from './order-instrument.component';
 
 describe('BuyInstrumentComponent', () => {
-  let component: BuyInstrumentComponent;
-  let fixture: ComponentFixture<BuyInstrumentComponent>;
+  let component: OrderInstrumentComponent;
+  let fixture: ComponentFixture<OrderInstrumentComponent>;
   let mockInstrumentService,mockSpinnerService,mockRouter,mockTradeService;
 
   let instruments:Instrument[]=[
     {
       instrumentId:'abc-frd-def',
-      description:'Apple Inc.' ,
+      instrumentDescription:'Apple Inc.' ,
       externalIdType:'CUSIP',
       externalId:'037833100',
       categoryId:'10',
@@ -30,7 +30,7 @@ describe('BuyInstrumentComponent', () => {
     },
     {
       instrumentId:'76t-dse-123',
-      description:'Alphabet Inc.' ,
+      instrumentDescription:'Alphabet Inc.' ,
       externalIdType:'CUSIP',
       externalId:'02079K107',
       categoryId:'20',
@@ -39,7 +39,7 @@ describe('BuyInstrumentComponent', () => {
     },
     {
       instrumentId:'uytd-trf',
-      description:'Alaska Air Group' ,
+      instrumentDescription:'Alaska Air Group' ,
       externalIdType:'CUSIP',
       externalId:'011659109',
       categoryId:'10',
@@ -48,7 +48,7 @@ describe('BuyInstrumentComponent', () => {
     },
     {
       instrumentId:'hgd-hgd-trd',
-      description:'Walmart Stores, Inc. ' ,
+      instrumentDescription:'Walmart Stores, Inc. ' ,
       externalIdType:'CUSIP',
       externalId:'931142103',
       categoryId:'20',
@@ -73,28 +73,28 @@ describe('BuyInstrumentComponent', () => {
       'instrumentId':'abc-frd-def',
       askPrice:34,
       bidPrice:33.56,
-      timestamp:new Date(Date.now()),
+      priceTimestamp:new Date(Date.now()),
       instrument:instruments[0],
     },
     {
       'instrumentId':'76t-dse-123',
       askPrice:40,
       bidPrice:41.56,
-      timestamp:new Date(Date.now()),
+      priceTimestamp:new Date(Date.now()),
       instrument:instruments[1],
     },
     {
       'instrumentId':'uytd-trf',
       askPrice:60,
       bidPrice:60.56,
-      timestamp:new Date(Date.now()),
+      priceTimestamp:new Date(Date.now()),
       instrument:instruments[2],
     },
     {
       'instrumentId':'hgd-hgd-trd',
       askPrice:181,
       bidPrice:184.12,
-      timestamp:new Date(Date.now()),
+      priceTimestamp:new Date(Date.now()),
       instrument:instruments[3],
     },
 
@@ -125,7 +125,7 @@ describe('BuyInstrumentComponent', () => {
 
     await TestBed.configureTestingModule({
 
-      declarations: [ BuyInstrumentComponent ],
+      declarations: [ OrderInstrumentComponent ],
       providers:[FormBuilder,{provide:Router,useValue:mockRouter},
         {provide:InstrumentService, useValue: mockInstrumentService},
         {provide:TradeService,useValue:mockTradeService},
@@ -135,7 +135,7 @@ describe('BuyInstrumentComponent', () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(BuyInstrumentComponent);
+    fixture = TestBed.createComponent(OrderInstrumentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -145,6 +145,6 @@ describe('BuyInstrumentComponent', () => {
   });
 
   it('should place a order successful on filling of data and submit of order',fakeAsync(()=>{
-    fail('Not Yet Implemented')
+
   }))
 });

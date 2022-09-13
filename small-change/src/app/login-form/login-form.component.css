@@ -1,14 +1,18 @@
-form{
-    border:3px solid #ffffff;
-}
+
 
 .wrapper{
     padding:16px;
 }
 
 .box{
-  border: 3px solid #a9a9a9;
+  /* border: 3px solid #a9a9a9; */
+  border-radius: 10px;
+  background-color: rgb(41, 65, 47);
   padding: 16px;
+}
+
+label{
+  color: white;
 }
 
 /* .box{
@@ -25,6 +29,7 @@ form{
 }
 
 .form-label{
+  font-size: 18px;
     font-weight:bold;
     font-family: 'Fidelity Sans', Arial, sans-serif;
 }
@@ -32,12 +37,21 @@ form{
 button{
     background-color: #64943E;
     color:white;
-    padding:14px 20px;
+    font-size: 20px;
+    padding:14px 16px;
     margin:8px 0;
     width:100%;
     border: none;
     outline: none;
     font-family: 'Fidelity Sans', Arial, sans-serif;
+}
+
+a{
+  color: white;
+}
+
+div{
+  color: white;
 }
 
 
