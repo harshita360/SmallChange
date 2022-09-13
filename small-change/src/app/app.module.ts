@@ -17,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {HttpClientModule} from '@angular/common/http'
 import { ToastModule } from './toast/toast.module';
 import { InvestmentPreferenceModule } from './investment-preference/investment-preference.module';
+import { LogOutComponent } from './log-out/log-out.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { InvestmentPreferenceModule } from './investment-preference/investment-p
     LoginFormComponent,
     LoginPageComponent,
     PortfolioPageComponent,
+    LogOutComponent,
   ],
   imports: [
     BrowserModule,

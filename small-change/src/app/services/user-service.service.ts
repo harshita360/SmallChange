@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { catchError, mergeMap, Observable, of, throwError } from 'rxjs';
 import { User } from '../models/user';
-import * as uuid from "uuid";
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
@@ -36,7 +35,29 @@ export class UserServiceService {
 
   private loggedInUser?:User;
 
-  constructor(private http:HttpClient) { }
+  constructor(private http:HttpClient) {
+    this.http.get<User[]>('http://localhost:4200/assets/db/clients.json').subscribe(
+      data=> {
+        const mappedData=data.map(u=>{
+          return new User(u.clientId, u.email, u.dateOfBirth, u.country, u.postalCode, u.password
+            , u.userName,u.identification)
+        })
+        this.users=mappedData
+      }
+    )
+  }
+
+
+
+  // updateData(): void {
+  //   //fs.writeFileSync('http://localhost:4200/assets/db/clients.json', JSON.stringify(this.users));
+  //   const httpHeaders=new HttpHeaders({
+  //     'Content-type':'application/json'
+  //   })
+  //   this.http.post('../../assets/db/clients.json', JSON.stringify(this.users),{headers:httpHeaders}).subscribe(()=>{
+  //     console.log("data saved")
+  //   })
+  // }
 
 
   authenticateUser(email:string,password:string): Observable<boolean>{
@@ -55,6 +76,7 @@ export class UserServiceService {
             user.clientId=clientData.clientId
             user.setToken(clientData.token)
             this.loggedInUser=user
+            //this.updateData()
             return of(true)
           }
           return of(false)
@@ -76,6 +98,7 @@ export class UserServiceService {
     }
     user.clientId=Math.floor(Math.random()*1000000)
     this.users.push(user)
+    //this.updateData()
     return of(user)
   }
 
@@ -106,4 +129,5 @@ export class UserServiceService {
     }
     return throwError(()=>'Error occured please try again later')
   }
+
 }
