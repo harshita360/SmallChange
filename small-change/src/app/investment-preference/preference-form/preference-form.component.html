@@ -1,6 +1,6 @@
-<div class="card">
+<div class="card text-white bg-dark">
   <div class="card-header">
-    <div class="card-title">Edit Investment preference</div>
+    <div class="card-title"> <h3> Edit Investment preference </h3></div>
   </div>
   <div class="card-body container-fluid">
     <form (ngSubmit)="updateMyPreference()" [formGroup]="preferenceForm" class="row g-3">
@@ -9,7 +9,7 @@
         <input type="email" class="form-control" id="investmentPurpose" formControlName="investmentPurpose">
       </div>
       <div class="col-md-6">
-        <label for="riskTolerance" class="form-label">Rish Tolerance</label>
+        <label for="riskTolerance" class="form-label">Risk Tolerance</label>
         <select type="email" class="form-control" id="riskTolerance" formControlName="riskTolerance">
           <option value="CONSERVATIVE" selected>CONSERVATIVE </option>
           <option value="BELOW AVERAGE">BELOW AVERAGE </option>

@@ -4,6 +4,11 @@ section{
   background-color: #70a702;
   border-radius: 20px;
 }
+
+.card-title{
+  border-bottom: 2px solid white;
+}
+
 h3{
   color: white;
 }
@@ -14,5 +19,6 @@ p:first-child{
   padding-top: 15px;
 }
 p{
-  border-bottom: 1px solid #568200;
+  padding-bottom: 4px;
+  border-bottom: 1px solid white;
 }

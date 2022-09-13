@@ -59,6 +59,21 @@ input.ng-invalid.ng-touched:not([type~='radio']){
   margin-left: 6rem;
 }
 
+body{
+  background-color: black;
+}
+
+/* card styles*/
+
+.card-header{
+  border-bottom: 2px solid white;
+}
+
+.card-footer{
+  border-top: 2px solid white;
+}
+
+
 @media(max-width:400px){
   .spinner-border{
     margin-left: 0;
