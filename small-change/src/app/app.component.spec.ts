@@ -3,12 +3,14 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { AppComponent } from './app.component';
 import { FooterBarComponent } from './footer-bar/footer-bar.component';
 import { HeaderLogoComponent } from './header-logo/header-logo.component';
+import {HttpClientTestingModule} from '@angular/common/http/testing'
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
+        HttpClientTestingModule
       ],
       declarations: [
         AppComponent,

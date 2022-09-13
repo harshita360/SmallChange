@@ -10,7 +10,7 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { LogintextComponent } from './logintext/logintext.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { FormsModule} from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
 import { TradeModule } from './trade/trade.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -41,7 +41,8 @@ import { LogOutComponent } from './log-out/log-out.component';
     ToastModule,
     ActivityModule,
     InvestmentPreferenceModule,
-    HttpClientModule
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

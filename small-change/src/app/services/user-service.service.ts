@@ -13,7 +13,7 @@ export class UserServiceService {
   users:User[]=[
     new User(
       NaN,
-      'user1@email.com',
+      'user1@gmail.com',
       new Date('1999-09-11'),
       'IN',
       '560061',
@@ -36,15 +36,15 @@ export class UserServiceService {
   private loggedInUser?:User;
 
   constructor(private http:HttpClient) {
-    this.http.get<User[]>('http://localhost:4200/assets/db/clients.json').subscribe(
-      data=> {
-        const mappedData=data.map(u=>{
-          return new User(u.clientId, u.email, u.dateOfBirth, u.country, u.postalCode, u.password
-            , u.userName,u.identification)
-        })
-        this.users=mappedData
-      }
-    )
+    // this.http.get<User[]>('http://localhost:4200/assets/db/clients.json').subscribe(
+    //   data=> {
+    //     const mappedData=data.map(u=>{
+    //       return new User(u.clientId, u.email, u.dateOfBirth, u.country, u.postalCode, u.password
+    //         , u.userName,u.identification)
+    //     })
+    //     this.users=mappedData
+    //   }
+    // )
   }
 
 
@@ -63,6 +63,7 @@ export class UserServiceService {
   authenticateUser(email:string,password:string): Observable<boolean>{
     let user:User | undefined;
     user=this.users.find(u => u.email===email);
+    console.log("User find =",user)
     if(user && user.password===password){
       const httpHeaders=new HttpHeaders({
         'Content-type':'application/json'

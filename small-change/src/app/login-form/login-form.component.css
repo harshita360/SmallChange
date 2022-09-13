@@ -54,6 +54,14 @@ div{
   color: white;
 }
 
+#login-error{
+  color: red;
+  border: 2px solid red;
+  background-color: rgb(231, 179, 179);
+  text-align: center;
+  padding: 5px;
+}
+
 
 
 

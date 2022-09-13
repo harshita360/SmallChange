@@ -13,6 +13,7 @@ describe('PreferenceService', () => {
       providers:[{provide:UserServiceService, useValue:mockUserService}]
     });
     service = TestBed.inject(PreferenceService);
+    mockUserService.getLoginUserId.and.returnValue(12352426)
   });
 
   it('should be created', () => {
