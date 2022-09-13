@@ -2,7 +2,7 @@
     <h2>Trade History</h2>
     <br />
     <div class="row">
-        <div class="col-12 offset-md-2 col-md-8 offset-lg-2 col-lg-8">
+        <div class="col-12 table-responsive-lg">
             <table style="width: 100%;">
                 <tr class="card text-bg-dark">
                     <td>
@@ -17,6 +17,7 @@
                                         <th>Client Id</th>
                                         <th>Trade Id</th>
                                         <th>Cash Value</th>
+                                        <th style="min-width: 150px ;">Trade Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -28,6 +29,7 @@
                                         <td>{{trade.clientId}}</td>
                                         <td>{{trade.tradeId}}</td>
                                         <td>{{trade.cashValue | currency}}</td>
+                                        <th>{{trade.transactionAt | date:'medium'}}</th>
                                     </tr>
                                 </tbody>
                             </table>

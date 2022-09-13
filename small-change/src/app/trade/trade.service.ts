@@ -6,6 +6,7 @@ import * as uuid from "uuid";
 import { User } from '../models/user';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Trade } from '../models/trade';
+import { TradeHisService } from '../services/trade-his.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class TradeService {
 
   private tradeUrl:string="http://localhost:3000/fmts/trades/trade"
 
-  constructor(private userService:UserServiceService,private http:HttpClient) {
+  constructor(private userService:UserServiceService,private http:HttpClient, private activityService:TradeHisService) {
    }
 
   buyAInstrument(order:Order) : Observable<Trade> {
@@ -31,7 +32,7 @@ export class TradeService {
         'Content-type':'application/json'
       })
       return this.http.post<Trade>(this.tradeUrl,oderData,{headers:httpHeaders})
-      .pipe(tap((data)=> console.log("trade data =",data)))
+      .pipe(tap((data)=>{ data.transactionAt=new Date(Date.now())  ;this.activityService.addTradeHis(data)}))
 
     }else{
       return throwError(()=>'Please re login to buy a instrument')

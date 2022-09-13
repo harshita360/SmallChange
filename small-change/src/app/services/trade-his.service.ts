@@ -19,7 +19,8 @@ export class TradeHisService {
       clientId:123,
       tradeId:'T123',
       cashValue:3500,
-      portfolioId:"123"
+      portfolioId:"123",
+      transactionAt:new Date(Date.now())
     },
     {
       instrumentId:'A2341',
@@ -30,7 +31,8 @@ export class TradeHisService {
       clientId:456,
       tradeId:'T234',
       cashValue:4505,
-      portfolioId:"123" 
+      portfolioId:"123" ,
+      transactionAt:new Date(Date.now())
     },
     {
       instrumentId:'A2341',
@@ -41,7 +43,8 @@ export class TradeHisService {
       clientId:456,
       tradeId:'T234',
       cashValue:4505,
-      portfolioId:"123" 
+      portfolioId:"123" ,
+      transactionAt:new Date(Date.now())
     },
     {
       instrumentId:'A2341',
@@ -52,7 +55,8 @@ export class TradeHisService {
       clientId:456,
       tradeId:'T234',
       cashValue:4505,
-      portfolioId:"123" 
+      portfolioId:"123" ,
+      transactionAt:new Date(Date.now())
     },
     {
       instrumentId:'A2341',
@@ -63,7 +67,8 @@ export class TradeHisService {
       clientId:1,
       tradeId:'T234',
       cashValue:4505,
-      portfolioId:"123" 
+      portfolioId:"123" ,
+      transactionAt:new Date(Date.now())
     }
   ];
 
@@ -79,7 +84,7 @@ export class TradeHisService {
     return of(trade);
   }
 
-  
+
 }
 
 

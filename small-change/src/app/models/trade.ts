@@ -11,5 +11,6 @@ export class Trade {
   public  cashValue: number,
   public  clientId: number,
   public  instrumentId: string,
-  public portfolioId:string){}
+  public portfolioId:string,
+  public transactionAt:Date){}
 }
