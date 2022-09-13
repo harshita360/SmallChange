@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { IsLoggedInGuard } from './guards/is-logged-in.guard';
 import { NotLoggedInGuard } from './guards/not-logged-in.guard';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
+import { TradeHistoryComponent } from './activity/trade-history/trade-history.component';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
 
 const routes: Routes = [

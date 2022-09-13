@@ -16,6 +16,7 @@ import { TradeModule } from './trade/trade.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastComponent } from './toast/toast.component';
 import { ToastModule } from './toast/toast.module';
+import { ActivityModule } from './activity/activity.module';
 
 @NgModule({
   declarations: [
@@ -35,7 +36,8 @@ import { ToastModule } from './toast/toast.module';
     FormsModule,
     TradeModule,
     BrowserAnimationsModule,
-    ToastModule
+    ToastModule,
+    ActivityModule
   ],
   providers: [],
   bootstrap: [AppComponent]
