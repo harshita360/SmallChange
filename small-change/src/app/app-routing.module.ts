@@ -4,8 +4,8 @@ import { LoginPageComponent } from './pages/login-page/login-page.component';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
 
 const routes: Routes = [
-  // {path:'login',component:LoginPageComponent},
-  // {path:'portfolio',component:PortfolioPageComponent}
+  {path:'login',component:LoginPageComponent},
+  {path:'portfolio',component:PortfolioPageComponent}
 ];
 
 @NgModule({
