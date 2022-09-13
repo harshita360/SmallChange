@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { PortfolioService } from 'src/app/services/portfolio.service';
 
 @Component({
   selector: 'app-portfolio-page',
@@ -6,10 +7,27 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./portfolio-page.component.css']
 })
 export class PortfolioPageComponent implements OnInit {
+  portfolio:any[]=[];
+  length:number=0;
+  userid:number=1;
 
-  constructor() { }
+  constructor(private portfolioService:PortfolioService) { }
 
   ngOnInit(): void {
+   
+    this.getUserPortfolioData();
+   
+  }
+
+
+  getUserPortfolioData()
+  {
+    this.portfolioService.getPortfolioData().subscribe(portfolio=>{
+      (this.portfolio=portfolio.filter(t=>t.user_id ===this.userid));
+      console.log(this.portfolio);
+      this.length=Object.keys(this.portfolio).length;
+      this.portfolio.map(elem=>(console.log(elem.stocks)));
+    });
   }
 
 }

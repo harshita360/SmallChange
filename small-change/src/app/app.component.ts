@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { UserServiceService } from './services/user-service.service';
-import { ToastService } from './toast/toast.service';
 
 @Component({
   selector: 'app-root',

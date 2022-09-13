@@ -1,0 +1,24 @@
+.positive
+{
+    color:greenyellow !important
+
+}
+.negative
+{
+    color:red !important
+}
+
+.background
+{
+    background-color: black;
+}
+div{
+    color:white
+}
+
+
+.card
+{
+    margin-bottom: 3%;
+}
+
