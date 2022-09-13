@@ -23,11 +23,11 @@
                                     <tr *ngFor="let trade of tradeList">
                                         <td>{{trade.instrumentId}}</td>
                                         <td>{{trade.quantity}}</td>
-                                        <td>{{trade.executionPrice}}</td>
-                                        <td>{{trade.direction}}</td>
+                                        <td>{{trade.executionPrice | currency}}</td>
+                                        <td>{{trade.direction | expand}}</td>
                                         <td>{{trade.clientId}}</td>
                                         <td>{{trade.tradeId}}</td>
-                                        <td>{{trade.cashValue}}</td>
+                                        <td>{{trade.cashValue | currency}}</td>
                                     </tr>
                                 </tbody>
                             </table>

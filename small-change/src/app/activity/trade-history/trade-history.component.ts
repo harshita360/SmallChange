@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Pipe, PipeTransform } from '@angular/core';
 import { Trade } from 'src/app/models/trade';
 import { TradeHisService } from 'src/app/services/trade-his.service';
 
@@ -22,4 +22,19 @@ export class TradeHistoryComponent implements OnInit {
     .subscribe(data => this.tradeList=data);
   }
 
+}
+
+@Pipe({name:"expand"})
+export class ExpandPipe implements PipeTransform{
+  transform(field:string) {
+    if(field == "B"){
+      return("Buy");
+    }
+    else if(field == "S"){
+      return("Sell");
+    }
+    else{
+      return("NaN");
+    }
+  }
 }
