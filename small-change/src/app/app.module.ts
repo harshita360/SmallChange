@@ -15,12 +15,9 @@ import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-pag
 import { TradeModule } from './trade/trade.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastModule } from './toast/toast.module';
-<<<<<<< HEAD
 import { ActivityModule } from './activity/activity.module';
-=======
 import { InvestmentPreferenceModule } from './investment-preference/investment-preference.module';
 import { LogOutComponent } from './log-out/log-out.component';
->>>>>>> origin/nikhil
 
 @NgModule({
   declarations: [
@@ -42,12 +39,9 @@ import { LogOutComponent } from './log-out/log-out.component';
     TradeModule,
     BrowserAnimationsModule,
     ToastModule,
-<<<<<<< HEAD
-    ActivityModule
-=======
+    ActivityModule,
     InvestmentPreferenceModule,
     HttpClientModule
->>>>>>> origin/nikhil
   ],
   providers: [],
   bootstrap: [AppComponent]
