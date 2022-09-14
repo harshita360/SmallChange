@@ -6,11 +6,17 @@
         <div class="mb-3">
             <label for="username" class="form-label">Username</label>
             <input type="text" class="form-control" id="username" formControlName="username" name="username">
-        </div>
+            <div class="error" id="login-user-name-error" *ngIf="hasUserNameError()">
+              {{hasUserNameError()}}
+            </div>
+          </div>
         <div class="mb-3">
             <label for="password" class="form-label"  >Password</label>
             <input type="password" class="form-control" name="password" formControlName="password" id="password" required>
-        </div>
+            <div class="error" id="login-password-error" *ngIf="hasPasswordError()">
+              {{hasPasswordError()}}
+            </div>
+          </div>
         <button type="button" [disabled]="!loginForm.valid" (click)="login()" >Log in</button>
         <div class="fpwd">
             <a href="#">Forgot your password?</a>

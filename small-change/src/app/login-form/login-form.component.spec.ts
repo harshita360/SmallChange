@@ -72,4 +72,42 @@ describe('LoginFormComponent', () => {
     expect(errorMesg).toBeTruthy()
 
   }))
+
+  it('should show the error username is needed after clearing the test entered',()=>{
+    let userNameError=fixture.debugElement.query(By.css('#login-user-name-error'))
+    expect(userNameError).toBeFalsy()
+
+    component.loginForm.get('username')?.setValue('rt')
+    component.loginForm.get('username')?.markAsDirty()
+    fixture.detectChanges()
+    userNameError=fixture.debugElement.query(By.css('#login-user-name-error'))
+    //console.log(fixture.debugElement.queryAll(By.css('.error')))
+    //console.log(component.loginForm.get('username')?.errors)
+
+    expect(userNameError.nativeElement.textContent.trim()).toBe('User name must be an email having 3 to 18 characters')
+
+    component.loginForm.get('username')?.setValue('')
+    fixture.detectChanges()
+    userNameError=fixture.debugElement.query(By.css('#login-user-name-error'))
+    expect(userNameError.nativeElement.textContent.trim()).toBe('Please enter user name')
+  })
+
+  it('should show the error passsword is needed after clearing the test entered and pattern error if password does not match pattern',()=>{
+    let userNameError=fixture.debugElement.query(By.css('#login-password-error'))
+    expect(userNameError).toBeFalsy()
+
+    component.loginForm.get('password')?.setValue('rt')
+    component.loginForm.get('password')?.markAsDirty()
+    fixture.detectChanges()
+    userNameError=fixture.debugElement.query(By.css('#login-password-error'))
+    //console.log(fixture.debugElement.queryAll(By.css('.error')))
+    //console.log(component.loginForm.get('username')?.errors)
+
+    expect(userNameError.nativeElement.textContent.trim()).toBe('Password can have special chapacters @,. , numbers and letters and have 6 - 24 letters')
+
+    component.loginForm.get('password')?.setValue('')
+    fixture.detectChanges()
+    userNameError=fixture.debugElement.query(By.css('#login-password-error'))
+    expect(userNameError.nativeElement.textContent.trim()).toBe('Please enter password')
+  })
 });

@@ -39,4 +39,30 @@ export class LoginFormComponent implements OnInit {
 
   }
 
+  hasUserNameError():string{
+    if(this.loginForm.get('username')?.pristine || this.loginForm.get('username')?.valid){
+      return '';
+    }
+    let message=''
+    if(this.loginForm.get('username')?.hasError('required')){
+      message='Please enter user name'
+    }else {
+      message="User name must be an email having 3 to 18 characters"
+    }
+    return message;
+  }
+
+  hasPasswordError():string{
+    if(this.loginForm.get('password')?.pristine || this.loginForm.get('password')?.valid){
+      return '';
+    }
+    let message=''
+    if(this.loginForm.get('password')?.hasError('required')){
+      message='Please enter password'
+    }else {
+      message="Password can have special chapacters @,. , numbers and letters and have 6 - 24 letters"
+    }
+    return message;
+  }
+
 }
