@@ -1,5 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { UpdateCallback } from '@popperjs/core';
 import { of } from 'rxjs';
 import { PortfolioService } from 'src/app/services/portfolio.service';
 
@@ -17,13 +18,13 @@ describe('PortfolioPageComponent', () => {
       "portfolio_name":"Demo portfolio",
       "stocks":[ 
           { "id":1, "instrumentId": 28738384, "instrument_codename":"APL", "quantity":450, "value":89000, "price":776,"change":-4.07},
-          { "id":2, "instrumentId": 87738384, "instrument_codename":"APL","quantity":450, "value":89000, "price":776, "change":10.99}
+          { "id":2, "instrumentId": 87738384, "instrument_codename":"AMZ","quantity":450, "value":89000, "price":776, "change":10.99}
       ],
       "portfolio_balance":100000}
   ]
-
+  let stockspy:null;
   MockPortfolioService=jasmine.createSpyObj('PortfolioService',['getPortfolioData']);
-  MockPortfolioService.getPortfolioData.and.returnValue(of(mockportfolio));
+  stockspy=MockPortfolioService.getPortfolioData.and.returnValue(of(mockportfolio));
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -42,10 +43,24 @@ describe('PortfolioPageComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should reflect portfolio text', () => {
+  it('should render correct page title', () => {
     expect(fixture.debugElement.nativeElement.querySelector('h2').textContent) // Testing the contentof h1 tag
 .toContain('Portfolio');
 });
+
+it('should return right table content',()=>{
+  
+  const compiled = fixture.debugElement.nativeElement;
+    const table = compiled.querySelector('table table');
+  expect(table.rows[1].cells[1].textContent).toBe('APL');
+})
+
+it('should call the portfolio service to fetch the data', () => {
+  component.getUserPortfolioData();
+  expect(stockspy).toHaveBeenCalled(); 
+});
+
+
 });
 
 
