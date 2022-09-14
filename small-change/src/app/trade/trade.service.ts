@@ -28,6 +28,7 @@ export class TradeService {
         clientId:userId,
         token:this.userService.getLogedInUserToken()
       }
+      console.log(order)
       const httpHeaders=new HttpHeaders({
         'Content-type':'application/json'
       })
@@ -49,6 +50,9 @@ export class TradeService {
       console.error("Server error status code ",error.status,' with text ', error.statusText)
       if(error.status==406){
         return throwError(()=>'Session timed out, lease login to get services')
+      }
+      if(error.status==409){
+        return throwError(()=>"The trade price was changed more than 5%, please review order")
       }
     }
     return throwError(()=>'Error occured please try again later')

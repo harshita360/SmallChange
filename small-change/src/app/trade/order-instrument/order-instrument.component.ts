@@ -56,7 +56,7 @@ export class OrderInstrumentComponent implements OnInit {
   categories: InstrumentCategory[]=[]
   instrumentsOfCategory:InstrumentPrice[]=[]
   selectedInstrument?: InstrumentPrice;
-  orderInstrumentForm: FormGroup;
+  orderInstrumentForm!: FormGroup;
   currentPortfolio:any;
   maxQuantityCanBuy:number=0;
   direction:string='B'
@@ -72,7 +72,11 @@ export class OrderInstrumentComponent implements OnInit {
       // if no params passed, use the same old form validations
 
 
-    this.orderInstrumentForm=formBuilder.group({
+   }
+
+  ngOnInit(): void {
+
+    this.orderInstrumentForm=this.formBuilder.group({
       'portfolioId':['',Validators.required],
       'instrumentCategoryId':[{value:'',disabled:true}, Validators.required],
       'instrumentId':[{value:'',disabled:true},Validators.required],
@@ -83,9 +87,6 @@ export class OrderInstrumentComponent implements OnInit {
     this.instrumentService.getAllCategories().subscribe(categories=>{
       this.categories=categories;
     })
-   }
-
-  ngOnInit(): void {
 
     // executing when the suer changes to another portfolio
     this.orderInstrumentForm.get('portfolioId')?.valueChanges.subscribe(portfolioId=>{
@@ -147,13 +148,15 @@ export class OrderInstrumentComponent implements OnInit {
         this.canFormBeSubmitted=false;
 
         // load the data for the category id selected
-      this.instrumentService.getInstrumentsByCategory(categoryId).subscribe( data=>{
+      this.instrumentService.getInstrumentsByCategory(categoryId).subscribe(
+        {next: data=>{
        // console.log('instruments receied',data)
         this.instrumentsOfCategory=data;
         this.selectedInstrument=undefined;
         this.enableInstrumentSelect()
         this.canFormBeSubmitted=true
-        this.spinnerSerice.hide()
+        this.spinnerSerice.hide()},
+        error:(e)=> this.toastService.showError(e)
       })
     })
 
@@ -324,12 +327,15 @@ export class OrderInstrumentComponent implements OnInit {
       this.orderInstrumentForm.value['quantity'],
       this.orderInstrumentForm.get('targetPrice')?.value,
       this.orderInstrumentForm.value['portfolioId'],this.direction)
-    this.tradeService.buyAInstrument(order).subscribe(re=>{
+    this.tradeService.buyAInstrument(order).subscribe({
+      next:re=>{
       //console.log("order submitted", re)
       this.toastService.showSuccess('Order Execution Successful')
       this.spinnerSerice.hide()
       this.router.navigate(['/portfolio'])
-    })
+    },
+    error:(e)=> this.toastService.showError(e)}
+    )
   }
 
 }

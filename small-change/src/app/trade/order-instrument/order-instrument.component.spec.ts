@@ -2,7 +2,7 @@ import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { of } from 'rxjs';
+import { of, throwError } from 'rxjs';
 import { Instrument } from 'src/app/models/instrument';
 import { InstrumentCategory } from 'src/app/models/instrument-category';
 import { InstrumentPrice } from 'src/app/models/instrument-price';
@@ -12,11 +12,23 @@ import { TradeService } from '../trade.service';
 import * as uuid from "uuid";
 
 import { OrderInstrumentComponent } from './order-instrument.component';
+import { By } from '@angular/platform-browser';
+import { ToastService } from 'src/app/toast/toast.service';
 
 describe('BuyInstrumentComponent', () => {
   let component: OrderInstrumentComponent;
   let fixture: ComponentFixture<OrderInstrumentComponent>;
-  let mockInstrumentService,mockSpinnerService,mockRouter,mockTradeService;
+  let mockInstrumentService,mockSpinnerService,mockRouter,mockTradeService:any;
+  let mockToastService:any;
+
+  let portfolios=[
+    {id:'123-fth-123',name:'portfolio 1',balance:1000,
+    holdings:[
+      {instrumentId:'abc-frd-def',quantity:10},
+      {instrumentId:'T67878',quantity:2000}
+    ]},
+    {id:'123-fth-drt',name:'portfilio 2',balance:10}
+  ]
 
   let instruments:Instrument[]=[
     {
@@ -102,6 +114,10 @@ describe('BuyInstrumentComponent', () => {
 
   beforeEach(async () => {
 
+    mockToastService=jasmine.createSpyObj(['showError','showSuccess'])
+    mockToastService.showError.and.callFake((args:any)=>{})
+    mockToastService.showSuccess.and.callFake((args:any)=>{})
+
     mockRouter=jasmine.createSpyObj(['navigate'])
     mockRouter.navigate.and.callFake(()=>{})
 
@@ -129,7 +145,8 @@ describe('BuyInstrumentComponent', () => {
       providers:[FormBuilder,{provide:Router,useValue:mockRouter},
         {provide:InstrumentService, useValue: mockInstrumentService},
         {provide:TradeService,useValue:mockTradeService},
-        {provide:NgxSpinnerService,useValue:mockSpinnerService}]
+        {provide:NgxSpinnerService,useValue:mockSpinnerService},
+      {provide:ToastService, useValue:mockToastService}]
     })
     .compileComponents();
   });
@@ -144,7 +161,205 @@ describe('BuyInstrumentComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should place a order successful on filling of data and submit of order',fakeAsync(()=>{
+  it('should place a buy order successful on filling of data and submit of order',fakeAsync(()=>{
+
+    component.portfolios=portfolios
+    fixture.detectChanges()
+    component.ngOnInit()
+    expect(component.orderInstrumentForm.valid).toBeFalsy()
+
+
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
+
+    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    // byt and sell options have been enabled , let it be buy
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
+
+    // seleting the cat 10 instruments
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeTruthy()
+    component.orderInstrumentForm.get('instrumentCategoryId')?.setValue('10')
+    fixture.detectChanges()
+
+    // gefter getting the filters
+    expect(component.instrumentsOfCategory.length).toBe(2)
+
+    //after selecting the category
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('instrumentId')?.setValue('abc-frd-def')
+    fixture.detectChanges()
+
+    // selecting of quantity that user can buy
+    expect(component.orderInstrumentForm.get('quantity')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('quantity')?.setValue(10)
+    fixture.detectChanges()
+    expect(component.orderInstrumentForm.valid).toBeTruthy()
+
+    const button=fixture.debugElement.query(By.css('#buy-trade-link')).nativeElement
+    expect(button.disabled).toBeFalsy()
+    button.dispatchEvent(new Event('click'))
+    expect(mockTradeService.buyAInstrument).toHaveBeenCalled()
+
 
   }))
+
+  it('should handle invalid quantity value',fakeAsync(()=>{
+
+    component.portfolios=portfolios
+    fixture.detectChanges()
+    component.ngOnInit()
+    expect(component.orderInstrumentForm.valid).toBeFalsy()
+
+
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
+
+    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    // byt and sell options have been enabled , let it be buy
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
+
+    // seleting the cat 10 instruments
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeTruthy()
+    component.orderInstrumentForm.get('instrumentCategoryId')?.setValue('10')
+    fixture.detectChanges()
+
+    // gefter getting the filters
+    expect(component.instrumentsOfCategory.length).toBe(2)
+
+    //after selecting the category
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('instrumentId')?.setValue('abc-frd-def')
+    fixture.detectChanges()
+
+    // selecting of quantity that user can buy
+    expect(component.orderInstrumentForm.get('quantity')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('quantity')?.setValue(50)
+    fixture.detectChanges()
+    expect(component.orderInstrumentForm.valid).toBeFalsy()
+
+    const button=fixture.debugElement.query(By.css('#buy-trade-link')).nativeElement
+    expect(button.disabled).toBeTruthy()
+
+
+  }))
+
+
+  it('should place a sell order successful on filling of data and submit of order',fakeAsync(()=>{
+
+    component.portfolios=portfolios
+    fixture.detectChanges()
+    component.ngOnInit()
+    expect(component.orderInstrumentForm.valid).toBeFalsy()
+
+
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
+
+    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    // byt and sell options have been enabled , let it be buy
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('direction')?.setValue('S')
+    // seleting the cat 10 instruments
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeTruthy()
+    component.orderInstrumentForm.get('instrumentCategoryId')?.setValue('10')
+    fixture.detectChanges()
+
+    // gefter getting the filters
+    expect(component.instrumentsOfCategory.length).toBe(2)
+
+    //after selecting the category
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('instrumentId')?.setValue('abc-frd-def')
+    fixture.detectChanges()
+
+    // selecting of quantity that user can buy
+    expect(component.orderInstrumentForm.get('quantity')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('quantity')?.setValue(8)
+    fixture.detectChanges()
+    expect(component.orderInstrumentForm.valid).toBeTruthy()
+
+    const button=fixture.debugElement.query(By.css('#buy-trade-link')).nativeElement
+    expect(button.disabled).toBeFalsy()
+    button.dispatchEvent(new Event('click'))
+    expect(mockTradeService.buyAInstrument).toHaveBeenCalled()
+
+
+  }))
+
+  it('should handle error when user trying to sell more than current holdings',fakeAsync(()=>{
+
+    component.portfolios=portfolios
+    fixture.detectChanges()
+    component.ngOnInit()
+    expect(component.orderInstrumentForm.valid).toBeFalsy()
+
+
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
+
+    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    // byt and sell options have been enabled , let it be buy
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('direction')?.setValue('S')
+    // seleting the cat 10 instruments
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeTruthy()
+    component.orderInstrumentForm.get('instrumentCategoryId')?.setValue('10')
+    fixture.detectChanges()
+
+    // gefter getting the filters
+    expect(component.instrumentsOfCategory.length).toBe(2)
+
+    //after selecting the category
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('instrumentId')?.setValue('abc-frd-def')
+    fixture.detectChanges()
+
+    // selecting of quantity that user can buy
+    expect(component.orderInstrumentForm.get('quantity')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('quantity')?.setValue(12)
+    fixture.detectChanges()
+    expect(component.orderInstrumentForm.valid).toBeFalsy()
+
+    const button=fixture.debugElement.query(By.css('#buy-trade-link')).nativeElement
+    expect(button.disabled).toBeTruthy()
+
+  }))
+
+  it('should handle buy order error',()=>{
+
+    mockTradeService.buyAInstrument.and.returnValue(throwError(()=>"The trade price was changed more than 5%, please review order"))
+
+    component.portfolios=portfolios
+    fixture.detectChanges()
+    component.ngOnInit()
+    expect(component.orderInstrumentForm.valid).toBeFalsy()
+
+
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
+
+    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    // byt and sell options have been enabled , let it be buy
+    expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
+
+    // seleting the cat 10 instruments
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeTruthy()
+    component.orderInstrumentForm.get('instrumentCategoryId')?.setValue('10')
+    fixture.detectChanges()
+
+    // gefter getting the filters
+    expect(component.instrumentsOfCategory.length).toBe(2)
+
+    //after selecting the category
+    expect(component.orderInstrumentForm.get('instrumentId')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('instrumentId')?.setValue('abc-frd-def')
+    fixture.detectChanges()
+
+    // selecting of quantity that user can buy
+    expect(component.orderInstrumentForm.get('quantity')?.disabled).toBeFalsy()
+    component.orderInstrumentForm.get('quantity')?.setValue(10)
+    fixture.detectChanges()
+    expect(component.orderInstrumentForm.valid).toBeTruthy()
+
+    const button=fixture.debugElement.query(By.css('#buy-trade-link')).nativeElement
+    expect(button.disabled).toBeFalsy()
+    button.dispatchEvent(new Event('click'))
+    expect(mockTradeService.buyAInstrument).toHaveBeenCalled()
+    expect(mockToastService.showError).toHaveBeenCalled()
+  })
 });
