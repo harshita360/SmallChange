@@ -36,7 +36,9 @@ export class LoginFormComponent implements OnInit {
         //alert('User Name or password wrong')
       }
     })
-
+  }
+  register(){
+    this.router.navigate(['/register']);
   }
 
   hasUserNameError():string{

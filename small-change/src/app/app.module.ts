@@ -18,6 +18,7 @@ import { ToastModule } from './toast/toast.module';
 import { ActivityModule } from './activity/activity.module';
 import { InvestmentPreferenceModule } from './investment-preference/investment-preference.module';
 import { LogOutComponent } from './log-out/log-out.component';
+import { RegisterationComponent } from './registeration/registeration.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { LogOutComponent } from './log-out/log-out.component';
     LoginPageComponent,
     PortfolioPageComponent,
     LogOutComponent,
+    RegisterationComponent,
   ],
   imports: [
     BrowserModule,
