@@ -20,6 +20,8 @@ export class PortfolioService {
         catchError(this.handleError));
   }
 
+  
+
   // getPortfolioData():void
   // {
   //   console.log("portfolio service called");
