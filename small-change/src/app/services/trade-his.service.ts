@@ -80,7 +80,7 @@ export class TradeHisService {
   }
 
   addTradeHis(trade:Trade):Observable<Trade>{
-    this.trades.push(trade);
+    this.trades= [trade,...this.trades];
     return of(trade);
   }
 

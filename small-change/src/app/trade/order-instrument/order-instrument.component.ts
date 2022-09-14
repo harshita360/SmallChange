@@ -64,6 +64,14 @@ export class OrderInstrumentComponent implements OnInit {
   constructor(private router:Router,private formBuilder:FormBuilder,
     private instrumentService:InstrumentService,private tradeService:TradeService,
     private spinnerSerice:NgxSpinnerService,private toastService:ToastService) {
+
+      // add a method that starts the spinner, loads the user portfolio,
+      // then check if route params are there
+      // if there don't stop loader, load the instrument details,
+      // if eligile for tha opeation , then enable only quantity and stop loader, else show error and redirect
+      // if no params passed, use the same old form validations
+
+
     this.orderInstrumentForm=formBuilder.group({
       'portfolioId':['',Validators.required],
       'instrumentCategoryId':[{value:'',disabled:true}, Validators.required],

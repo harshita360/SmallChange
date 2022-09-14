@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { delay, Observable, of,  tap,  throwError } from 'rxjs';
+import { catchError, delay, Observable, of,  tap,  throwError } from 'rxjs';
 import { Order } from '../models/order';
 import { UserServiceService } from '../services/user-service.service';
 import * as uuid from "uuid";
 import { User } from '../models/user';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Trade } from '../models/trade';
 import { TradeHisService } from '../services/trade-his.service';
 
@@ -32,11 +32,27 @@ export class TradeService {
         'Content-type':'application/json'
       })
       return this.http.post<Trade>(this.tradeUrl,oderData,{headers:httpHeaders})
-      .pipe(tap((data)=>{ data.transactionAt=new Date(Date.now())  ;this.activityService.addTradeHis(data)}))
+      .pipe(
+        catchError(this.handleError),
+        tap((data)=>{ data.transactionAt=new Date(Date.now())  ;this.activityService.addTradeHis(data)}))
 
     }else{
       return throwError(()=>'Please re login to buy a instrument')
     }
 
   }
+
+  handleError(error:HttpErrorResponse){
+    if(error.error instanceof ErrorEvent){
+      console.error("Error occured ",error.error.message)
+    }else{
+      console.error("Server error status code ",error.status,' with text ', error.statusText)
+      if(error.status==406){
+        return throwError(()=>'Session timed out, lease login to get services')
+      }
+    }
+    return throwError(()=>'Error occured please try again later')
+  }
+
+
 }
