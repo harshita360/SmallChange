@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { catchError, mergeMap, Observable, of, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
+import { ClientIdentification } from '../models/client-identification';
 
 @Injectable({
   providedIn: 'root'
@@ -64,10 +65,11 @@ export class UserServiceService {
     let user:User | undefined;
     user=this.users.find(u => u.email===email);
     if(user && user.password===password){
+      const data = {...user,clientID:''};
       const httpHeaders=new HttpHeaders({
         'Content-type':'application/json'
       })
-      return this.http.post<User>(this.clientUrl,user,{headers:httpHeaders})
+      return this.http.post<User>(this.clientUrl,data,{headers:httpHeaders})
       .pipe(
         catchError(this.handleError),
         mergeMap(clientData=>{
@@ -91,15 +93,37 @@ export class UserServiceService {
     return this.loggedInUser!=undefined;
   }
 
-  registerNewUser(user:User):  Observable<User> {
+  registerNewUser(user: User):  Observable<User> {
     const existinUser=this.users.find(u => u.email===user.email);
     if(existinUser){
       return throwError(()=> 'Already user with is email present')
     }
-    user.clientId=Math.floor(Math.random()*1000000)
-    this.users.push(user)
+    // const httpHeaders = new HttpHeaders({
+    //   'Content-type':'application/json'
+    // })
+    // let user: User;
+    // //user1: User[]= new User(NaN,email,dob,country,postalCode,password,userName,identification);
+    // return this.http.post<User>(this.clientUrl,,{headers:httpHeaders1})
+    //   .pipe(
+    //     catchError(this.handleError),
+    //     mergeMap(clientData=>{
+    //       console.log(clientData)
+    //       if(user){
+    //         user.clientId=clientData.clientId
+    //         user.setToken(clientData.token)
+    //         this.loggedInUser=user
+    //         //this.updateData()
+    //         user = clientData;
+    //         return of(user);
+    //       }
+    //     })
+    // user.clientId=Math.floor(Math.random()*1000000)
+    console.log(user);
+    this.users.push(user);
+    console.log(this.users);
     //this.updateData()
     return of(user)
+    
   }
 
   logout(){

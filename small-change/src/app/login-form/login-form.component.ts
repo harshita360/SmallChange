@@ -19,7 +19,6 @@ export class LoginFormComponent implements OnInit {
   }
 
   login(){
-
     this.userService.authenticateUser(this.userName,this.password).subscribe(data=>{
       if(data){
         alert('Logged In Successful');
@@ -28,7 +27,9 @@ export class LoginFormComponent implements OnInit {
         alert('User Name or password wrong')
       }
     })
-
+  }
+  register(){
+    this.router.navigate(['/register']);
   }
 
 }
