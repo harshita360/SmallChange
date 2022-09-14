@@ -20,12 +20,12 @@
     <h2>My Portfolio</h2>
     <br/>
 
-    <div *ngIf="length>0" class="row justify-content-md-center">
-        <div class="col col-md-6">
-            <table>
-                
+    <div *ngIf="length>0" class="row">
+        <div class="col-12 offset-md-2 col-md-8 offset-lg-3 col-lg-6">
+            <table style="width: 100%;">
+
                 <tr *ngFor="let item of portfolio" class="card text-bg-dark">
-                
+
                     <td class="card-header">
                         <h5>{{item.portfolio_name}}</h5>
                     </td>

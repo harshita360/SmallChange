@@ -10,8 +10,15 @@ import { NavigationComponent } from './navigation/navigation.component';
 import { LogintextComponent } from './logintext/logintext.component';
 import { LoginFormComponent } from './login-form/login-form.component';
 import { LoginPageComponent } from './pages/login-page/login-page.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-page.component';
+import { TradeModule } from './trade/trade.module';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastModule } from './toast/toast.module';
+import { ActivityModule } from './activity/activity.module';
+import { InvestmentPreferenceModule } from './investment-preference/investment-preference.module';
+import { LogOutComponent } from './log-out/log-out.component';
+import { RegisterationComponent } from './registeration/registeration.component';
 
 @NgModule({
   declarations: [
@@ -22,14 +29,22 @@ import { PortfolioPageComponent } from './portfolio/portfolio-page/portfolio-pag
     LogintextComponent,
     LoginFormComponent,
     LoginPageComponent,
-    PortfolioPageComponent
+    PortfolioPageComponent,
+    LogOutComponent,
+    RegisterationComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     NgbModule,
     FormsModule,
-    HttpClientModule
+    TradeModule,
+    BrowserAnimationsModule,
+    ToastModule,
+    ActivityModule,
+    InvestmentPreferenceModule,
+    HttpClientModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

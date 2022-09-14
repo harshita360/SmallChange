@@ -1,5 +1,6 @@
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, mergeMap, Observable, of, tap } from 'rxjs';
+import { catchError, concatMap, delay, map, mergeMap, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { Instrument } from '../models/instrument';
 import { InstrumentCategory } from '../models/instrument-category';
 import { InstrumentPrice } from '../models/instrument-price';
@@ -9,10 +10,12 @@ import { InstrumentPrice } from '../models/instrument-price';
 })
 export class InstrumentService {
 
+  private instrumentUrl:string='http://localhost:3000/fmts/trades/prices'
+
   instruments:Instrument[]=[
     {
       instrumentId:'123-123-456',
-      description:'Apple Inc.' ,
+      instrumentDescription:'Apple Inc.' ,
       externalIdType:'CUSIP',
       externalId:'037833100',
       categoryId:'1',
@@ -21,7 +24,7 @@ export class InstrumentService {
     },
     {
       instrumentId:'678-123-456',
-      description:'Alphabet Inc.' ,
+      instrumentDescription:'Alphabet Inc.' ,
       externalIdType:'CUSIP',
       externalId:'02079K107',
       categoryId:'2',
@@ -30,7 +33,7 @@ export class InstrumentService {
     },
     {
       instrumentId:'768-345-556',
-      description:'Alaska Air Group' ,
+      instrumentDescription:'Alaska Air Group' ,
       externalIdType:'CUSIP',
       externalId:'011659109',
       categoryId:'1',
@@ -39,7 +42,7 @@ export class InstrumentService {
     },
     {
       instrumentId:'123-456-456',
-      description:'Walmart Stores, Inc. ' ,
+      instrumentDescription:'Walmart Stores, Inc. ' ,
       externalIdType:'CUSIP',
       externalId:'931142103',
       categoryId:'2',
@@ -50,12 +53,16 @@ export class InstrumentService {
 
   categories:InstrumentCategory[]=[
     {
-      categoryId:'1',
-      categoryName:'Cat -1'
+      categoryId:'GOVT',
+      categoryName:'Government Instruments'
     },
     {
-      categoryId:'2',
-      categoryName:'Cat -2'
+      categoryId:'STOCK',
+      categoryName:'Non Government Instruments'
+    },
+    {
+      categoryId:' ',
+      categoryName:'All Instruments'
     }
   ]
 
@@ -64,28 +71,28 @@ export class InstrumentService {
       'instrumentId':'123-123-456',
       askPrice:34,
       bidPrice:33.56,
-      timestamp:new Date(Date.now()),
+      priceTimestamp:new Date(Date.now()),
       instrument:this.instruments[0],
     },
     {
       'instrumentId':'678-123-456',
       askPrice:40,
       bidPrice:41.56,
-      timestamp:new Date(Date.now()),
+      priceTimestamp:new Date(Date.now()),
       instrument:this.instruments[1],
     },
     {
       'instrumentId':'768-345-556',
       askPrice:120,
       bidPrice:121.56,
-      timestamp:new Date(Date.now()),
+      priceTimestamp:new Date(Date.now()),
       instrument:this.instruments[2],
     },
     {
-      'instrumentId':'123-123-456',
+      'instrumentId':'123-456-456',
       askPrice:180,
       bidPrice:182.12,
-      timestamp:new Date(Date.now()),
+      priceTimestamp:new Date(Date.now()),
       instrument:this.instruments[3],
     },
 
@@ -93,25 +100,45 @@ export class InstrumentService {
 
 
 
-  constructor() { }
+  constructor(private http:HttpClient) { }
 
   getAllCategories():Observable<InstrumentCategory[]>{
     return of(this.categories);
   }
 
   getInstrumentsByCategory(categoryId:string) :Observable<InstrumentPrice[]> {
-    return of(this.instruments.filter(i => i.categoryId===categoryId))
-    .pipe(
-      mergeMap(data=> {
-        let instrumentIds:string[]=data.map(i => i.instrumentId);
-        return this.getTheInstrumentPriceDetails(instrumentIds).pipe(
-          map(prices=> { return prices;})
-        )
+    // return of(this.instruments.filter(i => i.categoryId===categoryId))
+    // .pipe(
+    //   mergeMap(data=> {
+    //     let instrumentIds:string[]=data.map(i => i.instrumentId);
+    //     return this.getTheInstrumentPriceDetails(instrumentIds).pipe(
+    //       map(prices=> { return prices;}),
+    //       delay(1000)
+    //     )
+    //   })
+    // )
+
+    // getting the insruments from the server and then populating the instrument id
+    return this.http.get<InstrumentPrice[]>(`${this.instrumentUrl}/${categoryId}`).pipe(
+      catchError(this.handleError),
+      switchMap((value:InstrumentPrice[],index:number)=>{
+        return of(value.map(p=>{ p.instrumentId=p.instrument.instrumentId; return p }));
       })
     )
   }
 
   getTheInstrumentPriceDetails(instrumentIds:string[]): Observable<InstrumentPrice[]>{
-    return of(this.instrumentPrices.filter( ip => instrumentIds.includes(ip.instrumentId)))
+    return of(this.instrumentPrices.filter( ip => instrumentIds.includes(ip.instrumentId))).pipe(
+      delay(1000)
+    )
+  }
+
+  handleError(error:HttpErrorResponse){
+    if(error.error instanceof ErrorEvent){
+      console.error("Error occured with message ",error.error.message)
+    }else{
+      console.error("Server error with code ",error.status," with message ",error.statusText)
+    }
+    return throwError(()=>"Error occured, please try again later")
   }
 }
