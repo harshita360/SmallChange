@@ -22,9 +22,9 @@ nav{
 a{
     color:#356F95
 }
-a:visited{
+/* a:visited{
     color: #5C0198;
-  }
+  } */
   a:hover{
     color:black;
   }
@@ -33,3 +33,9 @@ a:visited{
     outline-color: #ccc;
     /* outline-width: 1px; */
   }
+
+
+.nav-active{
+  background-color: #568200;
+  color: white;
+}
