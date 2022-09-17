@@ -16,6 +16,7 @@ export class PortfolioPageComponent implements OnInit {
   ngOnInit(): void {
    
     this.getUserPortfolioData();
+    this.getUserPortfolioDataNew();
    
   }
 
@@ -24,6 +25,15 @@ export class PortfolioPageComponent implements OnInit {
   {
     this.portfolioService.getPortfolioData().subscribe(portfolio=>{
       (this.portfolio=portfolio.filter(t=>t.user_id ===this.userid));
+      console.log(this.portfolio);
+      this.length=Object.keys(this.portfolio).length;
+      this.portfolio.map(elem=>(console.log(elem.stocks)));
+    });
+  }
+
+  getUserPortfolioDataNew()
+  {
+    this.portfolioService.getPortfolioData().subscribe(portfolio=>{
       console.log(this.portfolio);
       this.length=Object.keys(this.portfolio).length;
       this.portfolio.map(elem=>(console.log(elem.stocks)));
