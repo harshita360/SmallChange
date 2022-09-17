@@ -156,7 +156,8 @@ export class OrderInstrumentComponent implements OnInit {
         this.enableInstrumentSelect()
         this.canFormBeSubmitted=true
         this.spinnerSerice.hide()},
-        error:(e)=> this.toastService.showError(e)
+        error:(e)=> this.toastService.showError(e),
+        complete:() => this.spinnerSerice.hide()
       })
     })
 
@@ -334,7 +335,10 @@ export class OrderInstrumentComponent implements OnInit {
       this.spinnerSerice.hide()
       this.router.navigate(['/portfolio'])
     },
-    error:(e)=> this.toastService.showError(e)}
+    error:(e)=> this.toastService.showError(e),
+    complete:() => this.spinnerSerice.hide()
+
+    }
     )
   }
 
