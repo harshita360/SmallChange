@@ -5,6 +5,8 @@ import { Trade } from '../models/trade';
 import { Order } from '../models/order';
 import { Portfolio } from '../models/portfolio';
 import { Stock } from '../models/stock';
+import { NgbTimeStructAdapter } from '@ng-bootstrap/ng-bootstrap/timepicker/ngb-time-adapter';
+
 
 
 @Injectable({
@@ -58,7 +60,7 @@ export class PortfolioService {
   getTradeDetails() {
 
     //input received
-    let instrument_name="APL";
+    let instrument_name="AAA";
     let testtrad: Trade =
     {
       "tradeId": "a62375d7-bcb4-46a1-b2f0-5ba6719ae9b5",
@@ -68,34 +70,64 @@ export class PortfolioService {
       order: new Order('123455', 4, 4.5, '123', 'B'),
       "cashValue": 1052.5,
       "clientId": 1,
-      "instrumentId": "28738384",
+      "instrumentId": "2873899",
       "portfolioId": "2222",
       "transactionAt": new Date(),
     }
 
     let length: number = 0;
     let newport: Portfolio[] = [];
-    newport=this.allPortfolio.filter(t=>t.user_id===testtrad.clientId);
+    newport=this.allPortfolio.filter(t=>t.user_id===testtrad.clientId); //[{},{}]
     length = Object.keys(newport).length;
+    console.log(newport);
     if(length>0)
     {
       console.log("user has exsiting  exisiting portfolios")
-      let currPortfolio:Portfolio[];
-      currPortfolio=newport.filter(t=>t.portfolio_id===testtrad.portfolioId);
+      let currPortfolio:Portfolio[]=[];
+      currPortfolio=newport.filter(t=>t.portfolio_id===testtrad.portfolioId);//[{}]
       console.log(currPortfolio);
-      let updateStock;
-      updateStock=currPortfolio[0].stocks?.filter(t=>t.instrumentId===testtrad.instrumentId);
-      // if(testtrad.direction==='B')
-      // {
-      //   updateStock[0].quantity=updateStock[0].quantity+testtrad.quantity;
-      // }
-      // else{
-      //   updateStock[0].quantity=updateStock[0].quantity-testtrad.quantity;
-      // }
-      
+      let instrumentFound:boolean=false;
+      if(Object.keys(currPortfolio).length>0)
+      {
+        this.allPortfolio.filter(t=>t.user_id===testtrad.clientId).filter(e=>e.portfolio_id===testtrad.portfolioId)[0].stocks?.map((elem)=>{
+          if(elem.instrumentId===testtrad.instrumentId)
+          {
+            console.log("found");
+            instrumentFound=true;
+            if(testtrad.direction==='B')
+            {
+            elem.quantity=elem.quantity+testtrad.quantity;
+            elem.value=elem.value+testtrad.cashValue;
+            }
+            else{
+              elem.quantity=elem.quantity-testtrad.quantity;
+              elem.value=elem.value-testtrad.cashValue;
+            }
+            //add logic for change value
+          }
+        })
+        if(!instrumentFound)
+        {
+          this.allPortfolio.filter(t=>t.user_id===testtrad.clientId).filter(e=>e.portfolio_id===testtrad.portfolioId)[0].stocks?.push({
+            "id":12,
+            "instrumentId":testtrad.instrumentId,
+            "instrument":instrument_name,
+            "quantity":testtrad.quantity,
+            "price":testtrad.executionPrice,
+            "value":testtrad.cashValue,
+            "change":0
+            
+          })
+            
+        }
+      }
+     
+     
+  
 
     }
     else{
+      console.log("inside else");
       let defaultPort:Portfolio={
         portfolio_id:"6666",
         user_id:testtrad.clientId,

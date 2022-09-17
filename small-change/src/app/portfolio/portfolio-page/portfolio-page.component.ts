@@ -16,7 +16,8 @@ export class PortfolioPageComponent implements OnInit {
   ngOnInit(): void {
    
     this.getUserPortfolioData();
-    this.getUserPortfolioDataNew();
+    // this.getUserPortfolioDataNew();
+    //this.portfolioService.getTradeDetails();
    
   }
 
