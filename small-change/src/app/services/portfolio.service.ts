@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { catchError, Observable, tap, throwError } from 'rxjs';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
+import { catchError, mergeMap, Observable, of, switchMap, tap, throwError } from 'rxjs';
 import { Trade } from '../models/trade';
 import { Order } from '../models/order';
 import { Portfolio } from '../models/portfolio';
 import { Stock } from '../models/stock';
 import { NgbTimeStructAdapter } from '@ng-bootstrap/ng-bootstrap/timepicker/ngb-time-adapter';
+import { InstrumentPrice } from '../models/instrument-price';
 
 
 
@@ -25,8 +26,8 @@ export class PortfolioService {
       "user_id": 1,
       "portfolio_category": "BROKERAGE",
       "portfolio_name": "My new portfolio",
-      stocks: [{ "id": 1, "instrumentId": "28738384", "instrument": "APL", "quantity": 450, "value": 89000, "price": 776, "change": -14.07 },
-               { "id": 2, "instrumentId": "87738384", "instrument": "AMZ", "quantity": 450, "value": 89000, "price": 776, "change": 5.07 }
+      stocks: [{ "id": 1, "instrumentId": "Q123", "instrument": "APL", "quantity": 450, "value": 89000, "price": 776, "change": -14.07 },
+               { "id": 2, "instrumentId": "N123456", "instrument": "AMZ", "quantity": 450, "value": 89000, "price": 776, "change": 5.07 }
       ],
       "portfolio_balance": 100000
     },
@@ -36,8 +37,8 @@ export class PortfolioService {
       "user_id": 1,
       "portfolio_category": "BROKERAGE",
       "portfolio_name": "Demo portfolio",
-      stocks: [{ "id": 1, "instrumentId": "28738384", "instrument": "APL", "quantity": 450, "value": 89000, "price": 776, "change": -14.07 },
-               { "id": 2, "instrumentId": "87738384", "instrument": "AMZ", "quantity": 450, "value": 89000, "price": 776, "change": 5.07 }
+      stocks: [{ "id": 1, "instrumentId": "Q123", "instrument": "APL", "quantity": 450, "value": 89000, "price": 776, "change": -14.07 },
+               { "id": 2, "instrumentId": "N123456", "instrument": "AMZ", "quantity": 450, "value": 89000, "price": 776, "change": 5.07 }
               ],
       "portfolio_balance": 100000
     },
@@ -50,11 +51,60 @@ export class PortfolioService {
       .pipe(
         catchError(this.handleError));
   }
+  
 
-  getPortfolioDataNew(): Observable<Portfolio[]> {
-    return this.http.get<Portfolio[]>(this.portfolioUrl)
-      .pipe(
-        catchError(this.handleError));
+  getPortfolioDataNew():Observable<Portfolio[]>{
+    
+    let portfolios:Portfolio[]=[];
+    portfolios=this.allPortfolio;
+    let instrument_arr:any[]=[];
+    portfolios.map((elem)=>{
+      elem.stocks?.map((stock)=>{
+       instrument_arr.push(stock.instrumentId);
+      })
+    })
+    console.log(instrument_arr);
+    const httpHeaders=new HttpHeaders({
+      'Content-type':'application/json'
+    })
+
+     let instrument_prices:InstrumentPrice[];
+    // let request={instrumentIds:instrument_arr}
+    // return this.http.post<InstrumentPrice[]>("http://localhost:3000/fmts/trades/prices/list",request,{headers:httpHeaders});
+
+    console.log("before request");
+    let request={instrumentIds:instrument_arr}
+    return this.http.post<InstrumentPrice[]>("http://localhost:3000/fmts/trades/prices/list",request,{headers:httpHeaders})
+    .pipe(catchError(this.handleError),
+    switchMap((value:InstrumentPrice[],index:number)=>{
+      console.log(value);
+     const newport=portfolios.map((elem)=>{
+        
+        elem.stocks= elem.stocks?.map((data)=>
+        {
+          var currprice=value.find((obj)=>{
+            return obj.instrument.instrumentId===data.instrumentId
+          })
+          console.log(currprice);
+          if(currprice)
+          {
+          data.change=((data.value/data.quantity)-currprice?.bidPrice)
+          }
+          return data;
+        })
+        return elem;
+      })
+      console.log(newport);
+      console.log(portfolios);
+       return of(newport);
+    }))
+
+    
+
+
+   
+     
+   
   }
 
   getTradeDetails() {
@@ -70,10 +120,19 @@ export class PortfolioService {
       order: new Order('123455', 4, 4.5, '123', 'B'),
       "cashValue": 1052.5,
       "clientId": 1,
-      "instrumentId": "2873899",
+      "instrumentId": "N123456",
       "portfolioId": "2222",
       "transactionAt": new Date(),
     }
+    let response_arr:InstrumentPrice[]=[];
+    let request_arr:any[]=[];
+    request_arr.push(testtrad.instrumentId);
+    let request=[{"instrumentIds":request_arr}];
+    const httpHeaders=new HttpHeaders({
+      'Content-type':'application/json'
+    })
+    this.http.post<InstrumentPrice[]>("http://localhost:3000/fmts/trades/prices/list",request,{headers:httpHeaders})
+    .subscribe((data)=>response_arr=data);
 
     let length: number = 0;
     let newport: Portfolio[] = [];
@@ -105,13 +164,17 @@ export class PortfolioService {
             }
             //add logic for change value
           }
+
         })
+       
         if(!instrumentFound)
         {
+
+
           this.allPortfolio.filter(t=>t.user_id===testtrad.clientId).filter(e=>e.portfolio_id===testtrad.portfolioId)[0].stocks?.push({
             "id":12,
             "instrumentId":testtrad.instrumentId,
-            "instrument":instrument_name,
+            "instrument":response_arr[0].instrument.externalIdType,
             "quantity":testtrad.quantity,
             "price":testtrad.executionPrice,
             "value":testtrad.cashValue,
@@ -134,44 +197,21 @@ export class PortfolioService {
         portfolio_category:"BROKERAGE",
         portfolio_name:"Default Portfolio",
         portfolio_balance:testtrad.quantity*testtrad.executionPrice,
-        stocks:[{ "id": 6, "instrumentId": testtrad.instrumentId, "instrument": instrument_name, "quantity": testtrad.quantity, "value": testtrad.cashValue, "price": testtrad.executionPrice, "change": 0 }
+        stocks:[{ "id": 6, "instrumentId": testtrad.instrumentId, "instrument": response_arr[0].instrument.externalIdType, "quantity": testtrad.quantity, "value": testtrad.cashValue, "price": testtrad.executionPrice, "change": 0 }
       ]
       }
       this.allPortfolio.push(defaultPort);
       console.log(this.allPortfolio);
 
     }
-    // this.getPortfolioData().subscribe(data => {
-    //   (newport = data.filter(t => t.user_id === testtrad.clientId));
-    //   length = Object.keys(newport).length;
-    //   if (length > 0) //user has a existing portfolio
-    //   {
-    //     let userport: Portfolio = {
-    //       portfolio_id: '',
-    //       user_id: 0,
-    //       portfolio_category: '',
-    //       portfolio_name: '',
-    //       portfolio_balance: 0,
-    //       stocks: undefined
-    //     };
-    //     userport = newport.filter(t => t.portfolio_id === testtrad.portfolioId);
+    
 
-    //   }
-    //   else {
-    //     //add a new portfolio with default name
-    //   }
-    // });
+   
 
 
   }
 
-  // getPortfolioData():void
-  // {
-  //   console.log("portfolio service called");
-  //   this.http.get<any>(this.portfolioUrl).subscribe({
-  //     next: data => {
-  //         this.PortfolioDetails = data;
-  //         //console.log(this.PortfolioDetails);
+  
 
 
   //     },
