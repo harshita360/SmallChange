@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, ROUTER_CONFIGURATION } from '@angular/router';
 import { InstrumentCategory } from 'src/app/models/instrument-category';
 import { InstrumentPrice } from 'src/app/models/instrument-price';
 import { Order } from 'src/app/models/order';
@@ -8,6 +8,8 @@ import { InstrumentService } from 'src/app/services/instrument.service';
 import { TradeService } from '../trade.service';
 import {NgxSpinnerService} from 'ngx-spinner'
 import { ToastService } from 'src/app/toast/toast.service';
+import { PortfolioService } from 'src/app/services/portfolio.service';
+import { createTypeReferenceDirectiveResolutionCache } from 'typescript';
 
 @Component({
   selector: 'app-order-instrument',
@@ -45,52 +47,61 @@ export class OrderInstrumentComponent implements OnInit {
   }
 
 
-  portfolios=[
-    {id:'123-fth-123',name:'portfolio 1',balance:1000,
-    holdings:[
-      {instrumentId:'N123456',quantity:10},
-      {instrumentId:'T67878',quantity:2000}
-    ]},
-    {id:'123-fth-drt',name:'portfilio 2',balance:10}
-  ]
+  portfolios:any[]=[]
   categories: InstrumentCategory[]=[]
   instrumentsOfCategory:InstrumentPrice[]=[]
   selectedInstrument?: InstrumentPrice;
   orderInstrumentForm!: FormGroup;
   currentPortfolio:any;
   maxQuantityCanBuy:number=0;
-  direction:string='B'
+  direction:string='B';
+  instrumentParam='';
 
   constructor(private router:Router,private formBuilder:FormBuilder,
     private instrumentService:InstrumentService,private tradeService:TradeService,
-    private spinnerSerice:NgxSpinnerService,private toastService:ToastService) {
+    private spinnerSerice:NgxSpinnerService,private toastService:ToastService, private  portService:PortfolioService,
+    private route:ActivatedRoute) {
 
       // add a method that starts the spinner, loads the user portfolio,
       // then check if route params are there
       // if there don't stop loader, load the instrument details,
       // if eligile for tha opeation , then enable only quantity and stop loader, else show error and redirect
       // if no params passed, use the same old form validations
-
+      this.orderInstrumentForm=this.formBuilder.group({
+        'portfolioId':['',Validators.required],
+        'instrumentCategoryId':[{value:'',disabled:true}, Validators.required],
+        'instrumentId':[{value:'',disabled:true},Validators.required],
+        'quantity':[{value:0,disabled:true},Validators.required],
+        'targetPrice':[{value:0,disabled:true}, Validators.required],
+        'direction':[{value:'B',disabled:true}, Validators.required]
+      })
 
    }
 
   ngOnInit(): void {
 
-    this.orderInstrumentForm=this.formBuilder.group({
-      'portfolioId':['',Validators.required],
-      'instrumentCategoryId':[{value:'',disabled:true}, Validators.required],
-      'instrumentId':[{value:'',disabled:true},Validators.required],
-      'quantity':[{value:0,disabled:true},Validators.required],
-      'targetPrice':[{value:0,disabled:true}, Validators.required],
-      'direction':[{value:'B',disabled:true}, Validators.required]
+
+    this.orderInstrumentForm.get('quantity')?.valueChanges.subscribe(newQuantity=>{
+      if(this.selectedInstrument){
+        this.setErrorOfControl('quantity')
+      }
     })
+
+
+
+    this.portService.getPortfolioData().subscribe({
+      next:(data) => {this.portfolios=data; console.log(this.portfolios)},
+      error:(e) => this.toastService.showError(e)
+    })
+
+
     this.instrumentService.getAllCategories().subscribe(categories=>{
       this.categories=categories;
     })
 
     // executing when the suer changes to another portfolio
     this.orderInstrumentForm.get('portfolioId')?.valueChanges.subscribe(portfolioId=>{
-      this.currentPortfolio=this.portfolios.find(p => p.id==portfolioId);
+      this.currentPortfolio=this.portfolios.find(p => p.portfolio_id==portfolioId);
       // this.validateAndUpdateTheFormBySelectedInstrument
       if(this.selectedInstrument){
         this.validateAndUpdateTheFormBySelectedInstrument(this.selectedInstrument.instrument.instrumentId)
@@ -102,13 +113,14 @@ export class OrderInstrumentComponent implements OnInit {
 
     this.orderInstrumentForm.get('direction')?.valueChanges.subscribe(value=>{
       this.direction=value
+      console.log('direction changed ',value)
       // if(this.selectedInstrument){
       //   this.validateAndUpdateTheFormBySelectedInstrument(this.selectedInstrument.instrument.instrumentId)
       // }else{
       //   this.orderInstrumentForm.get('isntrumentId')?.setValue('')
       // }
       this.selectedInstrument=undefined
-      this.orderInstrumentForm.get('isntrumentId')?.setValue('')
+      this.orderInstrumentForm.get('isntrumentId')?.setValue(this.instrumentParam)
       this.orderInstrumentForm.get('instrumentId')?.updateValueAndValidity()
       this.enableInstrumentCategorySelect();
     })
@@ -130,6 +142,7 @@ export class OrderInstrumentComponent implements OnInit {
       this.spinnerSerice.show()
 
       // set the value of selected instrument to be empty
+      if(this.instrumentParam===''){
       this.orderInstrumentForm.get('instrumentId')?.setValue('')
         this.orderInstrumentForm.get('instrumentId')?.updateValueAndValidity();
 
@@ -146,6 +159,9 @@ export class OrderInstrumentComponent implements OnInit {
         this.disableQuantity()
         this.selectedInstrument=undefined;
         this.canFormBeSubmitted=false;
+      }else{
+      }
+
 
         // load the data for the category id selected
       this.instrumentService.getInstrumentsByCategory(categoryId).subscribe(
@@ -155,7 +171,13 @@ export class OrderInstrumentComponent implements OnInit {
         this.selectedInstrument=undefined;
         this.enableInstrumentSelect()
         this.canFormBeSubmitted=true
-        this.spinnerSerice.hide()},
+        this.spinnerSerice.hide()
+        if(this.instrumentParam!==''){
+        //console.log("settting to instrumnt id",this.instrumentParam)
+        this.orderInstrumentForm.get('instrumentId')?.setValue(this.instrumentParam);
+        this.orderInstrumentForm.get('instrumentId')?.updateValueAndValidity();
+        }
+      },
         error:(e)=> { this.toastService.showError(e);this.spinnerSerice.hide()},
         complete:() => this.spinnerSerice.hide()
       })
@@ -164,7 +186,7 @@ export class OrderInstrumentComponent implements OnInit {
 
     // updating the form when the user selects an instrument
     this.orderInstrumentForm.get('instrumentId')?.valueChanges.subscribe(instrumentId=>{
-
+      //console.log("Updatijng instrument value ",instrumentId);
       if(instrumentId==''){
         return
       }
@@ -181,6 +203,47 @@ export class OrderInstrumentComponent implements OnInit {
         this.setErrorOfControl('quantity')
       }
     })
+
+
+
+
+
+
+    // if i am getting the data from the URL then
+
+    if(this.route.snapshot.params['portfolioId']!==undefined){
+      const portfolioId=this.route.snapshot.params['portfolioId'];
+      this.direction=this.route.snapshot.params['direction'];
+
+      const categoryId='';
+      const instrumentId=this.route.snapshot.params['instrumentId'];
+      this.instrumentParam=instrumentId;
+      console.log(portfolioId,instrumentId,this.direction)
+
+      this.portService.getPortfolioData().subscribe({
+        next: (data:any[]) => { this.currentPortfolio=data.find(p => p.portfolio_id==portfolioId);
+        // patching the values
+          console.log(this.currentPortfolio,data,data.find(p => p.portfolio_id===portfolioId))
+          if(this.currentPortfolio==null){
+            this.router.navigate(['/portfolio'])
+            this.toastService.showError("Portfolio Not Found")
+          }
+
+          // this.orderInstrumentForm.updateValueAndValidity();
+        this.orderInstrumentForm.get('portfolioId')?.setValue(portfolioId)
+        this.direction=this.route.snapshot.params['direction']
+        this.orderInstrumentForm.get('direction')?.setValue(this.route.snapshot.params['direction'])
+        console.log("This direction",this.direction)
+        this.orderInstrumentForm.get('direction')?.updateValueAndValidity();
+        this.orderInstrumentForm.get('instrumentCategoryId')?.setValue(' ')
+        //this.orderInstrumentForm.get('instrumentCategoryId')?.updateValueAndValidity();
+        // if()
+        // checking for the eligibility
+
+
+        },
+      })
+    }
   }
 
 
@@ -189,6 +252,8 @@ export class OrderInstrumentComponent implements OnInit {
 
     this.selectedInstrument=this.instrumentsOfCategory.find( ip => ip.instrument.instrumentId==instrumentId)
     let maxQuantityOfUser=0
+    console.log(this.selectedInstrument, this.instrumentsOfCategory);
+
     if(this.direction=='S' && this.selectedInstrument){
       maxQuantityOfUser=this.checkSellEligibility(this.selectedInstrument)
     }else if(this.direction=='B' && this.selectedInstrument){
@@ -204,8 +269,12 @@ export class OrderInstrumentComponent implements OnInit {
       }
 
     }else{
+      if(this.instrumentParam!=''){
+        this.toastService.showError("Instrument Not Found");
+      }
       this.selectedInstrument=undefined
       this.disableQuantity()
+      console.log("error")
       this.orderInstrumentForm.get('instrumentId')?.setValue('')
     }
 
@@ -216,8 +285,8 @@ export class OrderInstrumentComponent implements OnInit {
       // checking if the user has chosen an portfolio
       if(this.currentPortfolio){
         if(instrumentPrice){
-          if(this.currentPortfolio.balance> instrumentPrice.askPrice*instrumentPrice.instrument.minQuantity ){
-            return Math.floor(this.currentPortfolio.balance/instrumentPrice.askPrice)
+          if(this.currentPortfolio.portfolio_balance> instrumentPrice.askPrice*instrumentPrice.instrument.minQuantity ){
+            return Math.floor(this.currentPortfolio.portfolio_balance/instrumentPrice.askPrice)
           }
         }
       }
@@ -278,7 +347,7 @@ export class OrderInstrumentComponent implements OnInit {
 
       // getting the current holding of the present user
       //console.log(this.currentPortfolio.holdings)
-      const holdData=this.currentPortfolio.holdings.filter( (h:any) => h.instrumentId==instrumentPrice.instrument.instrumentId)
+      const holdData=this.currentPortfolio.stocks.filter( (h:any) => h.instrumentId==instrumentPrice.instrument.instrumentId)
       //console.log(holdData, instrumentPrice)
       // checking if the user has instrument
       if(holdData.length==1){
@@ -286,7 +355,7 @@ export class OrderInstrumentComponent implements OnInit {
         // checking if the user has minimum quantity of instrument to sell an instrument
        // console.log(holdData[0].quantity>=instrumentPrice.instrument.minQuantity===true?'Yes':'No')
         if(holdData[0].quantity>=instrumentPrice.instrument.minQuantity){
-          console.log('eligible')
+          //console.log('eligible')
           return holdData[0].quantity
         }
       }

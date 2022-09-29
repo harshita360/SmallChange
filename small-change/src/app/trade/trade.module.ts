@@ -10,7 +10,8 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 const tradeRoutes: Route[]=[
-  {path:'trade', component: TradeComponent, canActivate:[IsLoggedInGuard]}
+  {path:'trade', component: TradeComponent, canActivate:[IsLoggedInGuard]},
+  {path:'trade/:portfolioId/:direction/:instrumentId', component: TradeComponent, canActivate:[IsLoggedInGuard]}
 ]
 
 @NgModule({
