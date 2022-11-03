@@ -1,6 +1,6 @@
 import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { FormBuilder } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { of, throwError } from 'rxjs';
 import { Instrument } from 'src/app/models/instrument';
@@ -14,21 +14,63 @@ import * as uuid from "uuid";
 import { OrderInstrumentComponent } from './order-instrument.component';
 import { By } from '@angular/platform-browser';
 import { ToastService } from 'src/app/toast/toast.service';
+import { PortfolioService } from 'src/app/services/portfolio.service';
 
 describe('BuyInstrumentComponent', () => {
   let component: OrderInstrumentComponent;
   let fixture: ComponentFixture<OrderInstrumentComponent>;
   let mockInstrumentService,mockSpinnerService,mockRouter,mockTradeService:any;
   let mockToastService:any;
+  let mockPortfolioService:any;
+  let routeSpy:ActivatedRoute;
+  let mokcActivatedRoute={
+      snapshot:{
+        'params':{
+          'instrumentId':'',
+          'portfolioId':'',
+          'direction':''
+        }
+     }
+  }
 
-  let portfolios=[
-    {id:'123-fth-123',name:'portfolio 1',balance:1000,
-    holdings:[
-      {instrumentId:'abc-frd-def',quantity:10},
-      {instrumentId:'T67878',quantity:2000}
-    ]},
-    {id:'123-fth-drt',name:'portfilio 2',balance:10}
-  ]
+  let mockPortfolios=[
+    {
+    "portfolio_id": 1111,
+    "user_id" : 1,
+    "portfolio_category":"BROKERAGE",
+    "portfolio_name":"My new portfolio",
+    "stocks":[
+        { "id":1, "instrumentId": 28738384, "instrument_codename":"APL", "quantity":450, "value":89000, "price":776,"change":-14.07},
+        { "id":2, "instrumentId": 87738384, "instrument_codename":"AMZ","quantity":450, "value":89000, "price":776,"change":5.07},
+        { "id":3, "instrumentId": 28738384, "instrument_codename":"GGL", "quantity":227, "value":89000, "price":776,"change":14.07},
+        { "id":4, "instrumentId": "abc-frd-def", "instrument_codename":"BBY", "quantity":10, "value":89000, "price":776,"change":14.07},
+        {"id":5, "instrumentId": "T67890", "instrument_codename":"DES","quantity":300,"value":900,"change":-0.76544}
+
+    ],
+    "portfolio_balance":1000
+
+  },
+  {
+
+        "portfolio_id": 2222,
+        "user_id" : 1,
+        "portfolio_category":"BROKERAGE",
+        "portfolio_name":"Demo portfolio",
+        "stocks":[
+            { "id":1, "instrumentId": 28738384, "instrument_codename":"APL", "quantity":450, "value":89000, "price":776,"change":-4.07},
+            { "id":2, "instrumentId": 87738384, "instrument_codename":"APL","quantity":450, "value":89000, "price":776, "change":10.99}
+        ],
+        "portfolio_balance":100000
+  }]
+
+  // let portfolios=[
+  //   {id:'123-fth-123',name:'portfolio 1',balance:1000,
+  //   holdings:[
+  //     {instrumentId:'abc-frd-def',quantity:10},
+  //     {instrumentId:'T67878',quantity:2000}
+  //   ]},
+  //   {id:'123-fth-drt',name:'portfilio 2',balance:10}
+  // ]
 
   let instruments:Instrument[]=[
     {
@@ -139,6 +181,9 @@ describe('BuyInstrumentComponent', () => {
       return of(order)
     })
 
+    mockPortfolioService=jasmine.createSpyObj(['getPortfolioData'])
+    mockPortfolioService.getPortfolioData.and.returnValue(of(mockPortfolios))
+
     await TestBed.configureTestingModule({
 
       declarations: [ OrderInstrumentComponent ],
@@ -146,7 +191,9 @@ describe('BuyInstrumentComponent', () => {
         {provide:InstrumentService, useValue: mockInstrumentService},
         {provide:TradeService,useValue:mockTradeService},
         {provide:NgxSpinnerService,useValue:mockSpinnerService},
-      {provide:ToastService, useValue:mockToastService}]
+      {provide:ToastService, useValue:mockToastService},
+      {provide: ActivatedRoute, useValue: mokcActivatedRoute},
+      {provide: PortfolioService, useValue:mockPortfolioService}]
     })
     .compileComponents();
   });
@@ -155,6 +202,12 @@ describe('BuyInstrumentComponent', () => {
     fixture = TestBed.createComponent(OrderInstrumentComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    routeSpy=TestBed.inject(ActivatedRoute);
+    routeSpy.snapshot.params['portfolioId']=undefined;
+    routeSpy.snapshot.params['direction']=undefined;
+    routeSpy.snapshot.params['instrumentId']=undefined;
+
   });
 
   it('should create', () => {
@@ -163,7 +216,7 @@ describe('BuyInstrumentComponent', () => {
 
   it('should place a buy order successful on filling of data and submit of order',fakeAsync(()=>{
 
-    component.portfolios=portfolios
+    component.portfolios=mockPortfolios
     fixture.detectChanges()
     component.ngOnInit()
     expect(component.orderInstrumentForm.valid).toBeFalsy()
@@ -171,7 +224,7 @@ describe('BuyInstrumentComponent', () => {
 
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
 
-    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    component.orderInstrumentForm.get('portfolioId')?.setValue(mockPortfolios[0].portfolio_id)
     // byt and sell options have been enabled , let it be buy
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
 
@@ -204,7 +257,7 @@ describe('BuyInstrumentComponent', () => {
 
   it('should handle invalid quantity value',fakeAsync(()=>{
 
-    component.portfolios=portfolios
+    component.portfolios=mockPortfolios
     fixture.detectChanges()
     component.ngOnInit()
     expect(component.orderInstrumentForm.valid).toBeFalsy()
@@ -212,7 +265,7 @@ describe('BuyInstrumentComponent', () => {
 
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
 
-    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    component.orderInstrumentForm.get('portfolioId')?.setValue(mockPortfolios[0].portfolio_id)
     // byt and sell options have been enabled , let it be buy
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
 
@@ -244,7 +297,7 @@ describe('BuyInstrumentComponent', () => {
 
   it('should place a sell order successful on filling of data and submit of order',fakeAsync(()=>{
 
-    component.portfolios=portfolios
+    component.portfolios=mockPortfolios
     fixture.detectChanges()
     component.ngOnInit()
     expect(component.orderInstrumentForm.valid).toBeFalsy()
@@ -252,7 +305,7 @@ describe('BuyInstrumentComponent', () => {
 
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
 
-    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    component.orderInstrumentForm.get('portfolioId')?.setValue(mockPortfolios[0].portfolio_id)
     // byt and sell options have been enabled , let it be buy
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
     component.orderInstrumentForm.get('direction')?.setValue('S')
@@ -285,7 +338,7 @@ describe('BuyInstrumentComponent', () => {
 
   it('should handle error when user trying to sell more than current holdings',fakeAsync(()=>{
 
-    component.portfolios=portfolios
+    component.portfolios=mockPortfolios
     fixture.detectChanges()
     component.ngOnInit()
     expect(component.orderInstrumentForm.valid).toBeFalsy()
@@ -293,7 +346,7 @@ describe('BuyInstrumentComponent', () => {
 
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
 
-    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    component.orderInstrumentForm.get('portfolioId')?.setValue(mockPortfolios[0].portfolio_id)
     // byt and sell options have been enabled , let it be buy
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
     component.orderInstrumentForm.get('direction')?.setValue('S')
@@ -325,7 +378,7 @@ describe('BuyInstrumentComponent', () => {
 
     mockTradeService.buyAInstrument.and.returnValue(throwError(()=>"The trade price was changed more than 5%, please review order"))
 
-    component.portfolios=portfolios
+    component.portfolios=mockPortfolios
     fixture.detectChanges()
     component.ngOnInit()
     expect(component.orderInstrumentForm.valid).toBeFalsy()
@@ -333,7 +386,7 @@ describe('BuyInstrumentComponent', () => {
 
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeTruthy()
 
-    component.orderInstrumentForm.get('portfolioId')?.setValue(portfolios[0].id)
+    component.orderInstrumentForm.get('portfolioId')?.setValue(mockPortfolios[0].portfolio_id)
     // byt and sell options have been enabled , let it be buy
     expect(component.orderInstrumentForm.get('direction')?.disabled).toBeFalsy()
 
@@ -362,4 +415,17 @@ describe('BuyInstrumentComponent', () => {
     expect(mockTradeService.buyAInstrument).toHaveBeenCalled()
     expect(mockToastService.showError).toHaveBeenCalled()
   })
+
+  it('should redirect to portfolio if the paortflio id passed is invalid ',fakeAsync(()=>{
+    routeSpy.snapshot.params['portfolioId']='EMPTY';
+    routeSpy.snapshot.params['direction']='S';
+    routeSpy.snapshot.params['instrumentId']='EMPTY';
+
+   component.ngOnInit();
+
+   expect(mockToastService.showError).toHaveBeenCalled()
+  }))
+
+
+
 });

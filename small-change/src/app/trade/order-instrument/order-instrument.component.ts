@@ -210,15 +210,20 @@ export class OrderInstrumentComponent implements OnInit {
 
 
     // if i am getting the data from the URL then
-
+    console.log("params ", this.route.snapshot)
     if(this.route.snapshot.params['portfolioId']!==undefined){
       const portfolioId=this.route.snapshot.params['portfolioId'];
-      this.direction=this.route.snapshot.params['direction'];
+      const direction=this.route.snapshot.params['direction'];
 
       const categoryId='';
       const instrumentId=this.route.snapshot.params['instrumentId'];
       this.instrumentParam=instrumentId;
-      console.log(portfolioId,instrumentId,this.direction)
+      console.log(portfolioId,instrumentId,direction)
+
+      if(portfolioId=='' || instrumentId=='' || direction==''){
+        return;
+      }
+      this.direction=this.direction
 
       this.portService.getPortfolioData().subscribe({
         next: (data:any[]) => { this.currentPortfolio=data.find(p => p.portfolio_id==portfolioId);

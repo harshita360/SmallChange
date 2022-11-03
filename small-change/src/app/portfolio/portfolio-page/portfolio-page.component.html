@@ -1,21 +1,4 @@
-<!-- <div class="container">
-    <h2 class="text-center">My Portfolio</h2>
-    <div *ngIf="length>0">
-        <table class="table">
-            <tr *ngFor="let item of portfolio">
-                <div>
-                    <table>
-                        <tr>hello</tr>
-                        <tr *ngFor="let itemnew of item">
-                            <td>{{itemnew.portfolio_id}}</td>
-                        </tr>
-                    </table>
-                </div>
-            </tr>
 
-        </table>
-    </div>
-</div> -->
 <div class="container-fluid text-center background" >
     <h2>My Portfolio</h2>
     <br/>
@@ -24,7 +7,7 @@
         <div class="col-12 offset-md-2 col-md-8 offset-lg-3 col-lg-6">
             <table style="width: 100%;">
 
-                <tr *ngFor="let item of portfolio" class="card text-bg-dark">
+                <tr *ngFor="let item of port" class="card text-bg-dark">
 
                     <td class="card-header">
                         <h5>{{item.portfolio_name}}</h5>
@@ -47,7 +30,7 @@
                               <tbody>
                             <tr *ngFor="let elem of item.stocks">
                                 <td>{{elem.id}}</td>
-                                <td>{{elem.instrument_codename}}</td>
+                                <td>{{elem.instrument}}</td>
                                 <td>{{elem.quantity}}</td>
                                 <td >{{elem.price|currency}}</td>
                                 <td [ngClass]="{positive:elem.change>0,negative:elem.change<=0}">{{elem.change}}%<i class="bi bi-arrow-up-circle"></i></td>
