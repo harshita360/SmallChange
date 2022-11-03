@@ -57,6 +57,8 @@ export class OrderInstrumentComponent implements OnInit {
   direction:string='B';
   instrumentParam='';
 
+  totalPrice:number=0;
+
   constructor(private router:Router,private formBuilder:FormBuilder,
     private instrumentService:InstrumentService,private tradeService:TradeService,
     private spinnerSerice:NgxSpinnerService,private toastService:ToastService, private  portService:PortfolioService,
@@ -84,6 +86,10 @@ export class OrderInstrumentComponent implements OnInit {
     this.orderInstrumentForm.get('quantity')?.valueChanges.subscribe(newQuantity=>{
       if(this.selectedInstrument){
         this.setErrorOfControl('quantity')
+      }
+
+      if(this.selectedInstrument!=undefined && this.orderInstrumentForm.get("targetPrice")!=undefined){
+        this.totalPrice=newQuantity*this.orderInstrumentForm.get("targetPrice")?.value;
       }
     })
 
@@ -322,7 +328,6 @@ export class OrderInstrumentComponent implements OnInit {
     this.orderInstrumentForm.get('quantity')?.setValue(quantity);
     this.orderInstrumentForm.get('quantity')?.updateValueAndValidity()
     this.orderInstrumentForm.updateValueAndValidity()
-
   }
 
   disableInstrumentSelect(){

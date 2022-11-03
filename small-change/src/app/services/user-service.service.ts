@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, mergeMap, Observable, of, throwError } from 'rxjs';
+import { catchError, map, mergeMap, Observable, of, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ClientIdentification } from '../models/client-identification';
@@ -9,7 +9,8 @@ import { ClientIdentification } from '../models/client-identification';
 })
 export class UserServiceService {
 
-  private clientUrl="http://localhost:3000/fmts/client"
+  //private clientUrl="http://localhost:3000/fmts/client"
+  private clientUrl="http://localhost:8080/clients/login"
 
   users:User[]=[
     new User(
@@ -62,32 +63,51 @@ export class UserServiceService {
 
 
   authenticateUser(email:string,password:string): Observable<boolean>{
-    let user:User | undefined;
-    user=this.users.find(u => u.email===email);
-    console.log("User find =",user)
-    if(user && user.password===password){
-     const data = {...user,clientID:''};
-      const httpHeaders=new HttpHeaders({
-        'Content-type':'application/json'
+    // let user:User | undefined;
+    // user=this.users.find(u => u.email===email);
+    // console.log("User find =",user)
+    // if(user && user.password===password){
+    //  const data = {...user,clientID:''};
+    //   const httpHeaders=new HttpHeaders({
+    //     'Content-type':'application/json'
+    //   })
+    //   return this.http.post<User>(this.clientUrl,data,{headers:httpHeaders})
+    //   .pipe(
+    //     catchError(this.handleError),
+    //     mergeMap(clientData=>{
+    //       console.log(clientData)
+    //       if(user){
+    //         user.clientId=clientData.clientId
+    //         user.setToken(clientData.token)
+    //         this.loggedInUser=user
+    //         //this.updateData()
+    //         return of(true)
+    //       }
+    //       return of(false)
+    //     })
+    //   )
+    // }else{
+    //   return of(false);
+    // }
+
+    const httpHeaders=new HttpHeaders({
+           'Content-type':'application/json'
       })
-      return this.http.post<User>(this.clientUrl,data,{headers:httpHeaders})
-      .pipe(
-        catchError(this.handleError),
-        mergeMap(clientData=>{
-          console.log(clientData)
-          if(user){
-            user.clientId=clientData.clientId
-            user.setToken(clientData.token)
-            this.loggedInUser=user
-            //this.updateData()
-            return of(true)
-          }
-          return of(false)
-        })
-      )
-    }else{
-      return of(false);
-    }
+
+    let postData={"email":email,"password":password}
+
+    return this.http.post<any>(`${this.clientUrl}`,postData,{ "headers": httpHeaders})
+    .pipe(
+      mergeMap((clientData)=>{
+        let user:User;
+        user=new User(clientData.clientID,email,new Date(),"","","",clientData.userName,[]);
+        user.setToken(clientData.token)
+        this.loggedInUser=user
+        return of(true);
+      }),
+      catchError(this.handleError)
+    )
+
   }
 
   isLoggedIn():boolean{
@@ -124,7 +144,7 @@ export class UserServiceService {
     console.log(this.users);
     //this.updateData()
     return of(user)
-    
+
   }
 
   logout(){

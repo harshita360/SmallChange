@@ -22,3 +22,12 @@ div{
     margin-bottom: 3%;
 }
 
+.value-box{
+  display: inline-block;
+  padding: 5px;
+  border-radius: 10px;
+  margin-right: 10px;
+}
+
+
+

@@ -1,6 +1,6 @@
 export  class Stock{
     constructor(
-        public id:number,
+        public id:String,
         public instrumentId:string,
         public instrument:string,
         public quantity:number,
@@ -9,5 +9,5 @@ export  class Stock{
         public change:number
     )
     {}
-    
+
 }

@@ -17,7 +17,9 @@ export class PortfolioService {
   PortfolioDetails: any[] = [];
   instrumentDetails: any[] = [];
   combinedDetails: any[] = [];
-  portfolioUrl = 'assets/portfolio.json';
+  //portfolioUrl = 'assets/portfolio.json';
+  //1728765503
+  portfolioUrl="http://localhost:8080/portfolios"
   instrumentInfoUrl = 'assets/instruments.json';
   errorMessage: string = '';
   allPortfolio: Portfolio[] = [
@@ -26,10 +28,12 @@ export class PortfolioService {
       "user_id": 1,
       "portfolio_category": "BROKERAGE",
       "portfolio_name": "My new portfolio",
-      stocks: [{ "id": 1, "instrumentId": "Q123", "instrument": "APL", "quantity": 450, "value": 89000, "price": 776, "change": -14.07 },
-               { "id": 2, "instrumentId": "N123456", "instrument": "AMZ", "quantity": 450, "value": 89000, "price": 776, "change": 5.07 }
+      stocks: [{ "id": "1", "instrumentId": "Q123", "instrument": "APL", "quantity": 450, "value": 89000, "price": 776, "change": -14.07 },
+               { "id": "2", "instrumentId": "N123456", "instrument": "AMZ", "quantity": 450, "value": 89000, "price": 776, "change": 5.07 }
       ],
-      "portfolio_balance": 100000
+      "portfolio_balance": 100000,
+      "totalInvestmentPrice":1000,
+      "totalSharesWorth":12000
     },
     {
 
@@ -37,74 +41,145 @@ export class PortfolioService {
       "user_id": 1,
       "portfolio_category": "BROKERAGE",
       "portfolio_name": "Demo portfolio",
-      stocks: [{ "id": 1, "instrumentId": "Q123", "instrument": "APL", "quantity": 450, "value": 89000, "price": 776, "change": -14.07 },
-               { "id": 2, "instrumentId": "N123456", "instrument": "AMZ", "quantity": 450, "value": 89000, "price": 776, "change": 5.07 }
+      stocks: [{ "id": "1", "instrumentId": "Q123", "instrument": "APL", "quantity": 450, "value": 89000, "price": 776, "change": -14.07 },
+               { "id": "2", "instrumentId": "N123456", "instrument": "AMZ", "quantity": 450, "value": 89000, "price": 776, "change": 5.07 }
               ],
-      "portfolio_balance": 100000
+      "portfolio_balance": 100000,
+      "totalInvestmentPrice":1000,
+      "totalSharesWorth":12000
     },
   ]
 
   constructor(private http: HttpClient) { }
 
-  getPortfolioData(): Observable<any[]> {
-    return this.http.get<any[]>(this.portfolioUrl)
+  getPortfolioData(): Observable<Portfolio[]> {
+    return this.http.get<any[]>(`${this.portfolioUrl}/client/1728765503`)
       .pipe(
-        catchError(this.handleError));
+        catchError(this.handleError),
+        switchMap((serverPortfolioData:any[],index:number)=>{
+
+          const resp:Portfolio[]=serverPortfolioData.map( (serverPortfolio)=>{
+
+            const stocks=serverPortfolio.holdings.map((hold:any)=>{
+              console.log(hold.insrumentId,hold.quantity);
+              return new Stock("",hold.insrumentId,"",hold.quantity,
+              -1,hold.invetsmentprice,-1
+              )
+            });
+
+            return new Portfolio(serverPortfolio.portfolioId,serverPortfolio.clientId,
+              serverPortfolio.portfolioTypeName, serverPortfolio.portfolioName ,
+              serverPortfolio.balance,stocks);
+          });
+          return of(resp);
+        })
+      );
   }
-  
+
+
+  // getPortfolioDataNew():Observable<Portfolio[]>{
+
+  //   let portfolios:Portfolio[]=[];
+  //   portfolios=this.allPortfolio;
+  //   let instrument_arr:any[]=[];
+  //   portfolios.map((elem)=>{
+  //     elem.stocks?.map((stock)=>{
+  //      instrument_arr.push(stock.instrumentId);
+  //     })
+  //   })
+  //   console.log(instrument_arr);
+  //   const httpHeaders=new HttpHeaders({
+  //     'Content-type':'application/json'
+  //   })
+
+  //    let instrument_prices:InstrumentPrice[];
+  //   // let request={instrumentIds:instrument_arr}
+  //   // return this.http.post<InstrumentPrice[]>("http://localhost:3000/fmts/trades/prices/list",request,{headers:httpHeaders});
+
+  //   console.log("before request");
+  //   let request={instrumentIds:instrument_arr}
+  //   return this.http.post<InstrumentPrice[]>("http://localhost:3000/fmts/trades/prices/list",request,{headers:httpHeaders})
+  //   .pipe(catchError(this.handleError),
+  //   switchMap((value:InstrumentPrice[],index:number)=>{
+  //     console.log(value);
+  //    const newport=portfolios.map((elem)=>{
+
+  //       elem.stocks= elem.stocks?.map((data)=>
+  //       {
+  //         var currprice=value.find((obj)=>{
+  //           return obj.instrument.instrumentId===data.instrumentId
+  //         })
+  //         console.log(currprice);
+  //         if(currprice)
+  //         {
+  //         data.change=((data.value/data.quantity)-currprice?.bidPrice)
+  //         }
+  //         return data;
+  //       })
+  //       return elem;
+  //     })
+  //     console.log(newport);
+  //     console.log(portfolios);
+  //      return of(newport);
+  //   }))
+
+
+
+
+
+
+
+  // }
 
   getPortfolioDataNew():Observable<Portfolio[]>{
-    
-    let portfolios:Portfolio[]=[];
-    portfolios=this.allPortfolio;
-    let instrument_arr:any[]=[];
-    portfolios.map((elem)=>{
-      elem.stocks?.map((stock)=>{
-       instrument_arr.push(stock.instrumentId);
-      })
-    })
-    console.log(instrument_arr);
-    const httpHeaders=new HttpHeaders({
-      'Content-type':'application/json'
-    })
-
-     let instrument_prices:InstrumentPrice[];
-    // let request={instrumentIds:instrument_arr}
-    // return this.http.post<InstrumentPrice[]>("http://localhost:3000/fmts/trades/prices/list",request,{headers:httpHeaders});
-
-    console.log("before request");
-    let request={instrumentIds:instrument_arr}
-    return this.http.post<InstrumentPrice[]>("http://localhost:3000/fmts/trades/prices/list",request,{headers:httpHeaders})
-    .pipe(catchError(this.handleError),
-    switchMap((value:InstrumentPrice[],index:number)=>{
-      console.log(value);
-     const newport=portfolios.map((elem)=>{
-        
-        elem.stocks= elem.stocks?.map((data)=>
-        {
-          var currprice=value.find((obj)=>{
-            return obj.instrument.instrumentId===data.instrumentId
+    return this.getPortfolioData()
+      .pipe(
+        switchMap((portfolios:Portfolio[],index:number)=>{
+          let instrument_arr:any[]=[];
+          portfolios.map((elem)=>{
+            elem.stocks?.map((stock)=>{
+            instrument_arr.push(stock.instrumentId);
+            })
           })
-          console.log(currprice);
-          if(currprice)
-          {
-          data.change=((data.value/data.quantity)-currprice?.bidPrice)
-          }
-          return data;
+          let instrument_prices:InstrumentPrice[];
+          let request={instrumentIds:instrument_arr}
+          return this.http.post<InstrumentPrice[]>("http://localhost:3000/fmts/trades/prices/list",request)
+          .pipe(catchError(this.handleError),
+          switchMap((value:InstrumentPrice[],index:number)=>{
+            console.log(value);
+          const newport=portfolios.map((elem)=>{
+              let totalPresentStockValue:number=0;
+              let totalInvestmentPrice:number=0
+
+              elem.stocks= elem.stocks?.map((data)=>
+              {
+
+                totalInvestmentPrice+=data.price
+
+                var currprice=value.find((obj)=>{
+                  return obj.instrument.instrumentId===data.instrumentId
+                })
+                //console.log(currprice);
+                if(currprice)
+                {
+                 data.change=-1*((data.price/data.quantity)-currprice?.bidPrice)
+                 data.value=data.quantity*currprice.bidPrice
+                 data.id=currprice.instrument.instrumentDescription
+                 totalPresentStockValue+=data.value
+                }
+                return data;
+              })
+              elem.totalInvestmentPrice=totalInvestmentPrice
+              elem.totalSharesWorth=totalPresentStockValue
+              return elem;
+            })
+            console.log(newport);
+            console.log(portfolios);
+            return of(newport);
+          }))
+
         })
-        return elem;
-      })
-      console.log(newport);
-      console.log(portfolios);
-       return of(newport);
-    }))
-
-    
-
-
-   
-     
-   
+      )
   }
 
   getTradeDetails() {
@@ -166,27 +241,27 @@ export class PortfolioService {
           }
 
         })
-       
+
         if(!instrumentFound)
         {
 
 
           this.allPortfolio.filter(t=>t.user_id===testtrad.clientId).filter(e=>e.portfolio_id===testtrad.portfolioId)[0].stocks?.push({
-            "id":12,
+            "id":"12",
             "instrumentId":testtrad.instrumentId,
             "instrument":response_arr[0].instrument.externalIdType,
             "quantity":testtrad.quantity,
             "price":testtrad.executionPrice,
             "value":testtrad.cashValue,
             "change":0
-            
+
           })
-            
+
         }
       }
-     
-     
-  
+
+
+
 
     }
     else{
@@ -196,22 +271,24 @@ export class PortfolioService {
         user_id:testtrad.clientId,
         portfolio_category:"BROKERAGE",
         portfolio_name:"Default Portfolio",
+        "totalInvestmentPrice":1000,
+        "totalSharesWorth":12000,
         portfolio_balance:testtrad.quantity*testtrad.executionPrice,
-        stocks:[{ "id": 6, "instrumentId": testtrad.instrumentId, "instrument": response_arr[0].instrument.externalIdType, "quantity": testtrad.quantity, "value": testtrad.cashValue, "price": testtrad.executionPrice, "change": 0 }
+        stocks:[{ "id": "6", "instrumentId": testtrad.instrumentId, "instrument": response_arr[0].instrument.externalIdType, "quantity": testtrad.quantity, "value": testtrad.cashValue, "price": testtrad.executionPrice, "change": 0 }
       ]
       }
       this.allPortfolio.push(defaultPort);
       console.log(this.allPortfolio);
 
     }
-    
 
-   
+
+
 
 
   }
 
-  
+
 
 
   //     },
