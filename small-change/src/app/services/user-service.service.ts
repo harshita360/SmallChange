@@ -100,9 +100,10 @@ export class UserServiceService {
     .pipe(
       mergeMap((clientData)=>{
         let user:User;
-        user=new User(clientData.clientID,email,new Date(),"","","",clientData.userName,[]);
+        user=new User(clientData.clientId,email,new Date(),"","","",clientData.userName,[]);
         user.setToken(clientData.token)
         this.loggedInUser=user
+        console.log(this.loggedInUser);
         return of(true);
       }),
       catchError(this.handleError)

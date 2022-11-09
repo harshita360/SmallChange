@@ -5,18 +5,30 @@ import { PortfolioService } from './portfolio.service';
 describe('PortfolioService', () => {
   let service: PortfolioService;
   let httpTestingController: HttpTestingController;
-  const mockportfolio=[
+  const mockportfolioV1=[
     {
       "portfolio_id": 2222,
       "user_id" : 1,
       "portfolio_category":"BROKERAGE",
       "portfolio_name":"Demo portfolio",
-      "stocks":[ 
+      "stocks":[
           { "id":1, "instrumentId": 28738384, "instrument_codename":"APL", "quantity":450, "value":89000, "price":776,"change":-4.07},
           { "id":2, "instrumentId": 87738384, "instrument_codename":"AMZ","quantity":450, "value":89000, "price":776, "change":10.99}
       ],
       "portfolio_balance":100000}
-  ]
+  ];
+  const mockportfolioV2=[
+    {
+      "portfolioId": 2222,
+      "clientId" : 1,
+      "portfolioTypeName":"BROKERAGE",
+      "portfolioName":"Demo portfolio",
+      "holdings":[
+          { "id":1, "instrumentId": 28738384, "instrument_codename":"APL", "quantity":450, "value":89000, "price":776,"change":-4.07},
+          { "id":2, "instrumentId": 87738384, "instrument_codename":"AMZ","quantity":450, "value":89000, "price":776, "change":10.99}
+      ],
+      "balance":100000}
+  ];
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [
@@ -31,21 +43,20 @@ describe('PortfolioService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should return portfolios', inject([PortfolioService], 
+  it('should return portfolios', inject([PortfolioService],
     fakeAsync((service: PortfolioService) => {
     let portfolios: any[] = [];
     service.getPortfolioData()
     .subscribe(data => {console.log(data);portfolios = data});
-    const req = httpTestingController.expectOne(
-    'assets/portfolio.json');
+    const req = httpTestingController.expectOne('http://localhost:8080/portfolios/client');
     expect(req.request.method).toEqual('GET');
-   
-    req.flush(mockportfolio);
-    
+
+    req.flush(mockportfolioV2);
+
     httpTestingController.verify();
     tick();
-    expect(mockportfolio).toBeTruthy();
-    expect(mockportfolio[0].portfolio_name).toBe('Demo portfolio');
+    expect(portfolios).toBeTruthy();
+    expect(portfolios[0].portfolio_name).toBe('Demo portfolio');
    })));
 
    it('should handle service error', fakeAsync( ()=>{
@@ -57,7 +68,7 @@ describe('PortfolioService', () => {
       { next:data=> fail("false"),
       error:(e)=> errorMsg=e}
     )
-    const req=httpTestingController.expectOne('assets/portfolio.json')
+    const req=httpTestingController.expectOne('http://localhost:8080/portfolios/client')
     expect(req.request.method).toBe('GET')
     req.flush('Attribute error',{
       status:404,
@@ -68,6 +79,6 @@ describe('PortfolioService', () => {
     const errorResponse=spyObject.calls.argsFor(0)[0]
     expect(errorResponse.status).toBe(404)
   }))
-  
-  
+
+
 });
