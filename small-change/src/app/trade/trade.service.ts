@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { catchError, delay, Observable, of,  tap,  throwError } from 'rxjs';
 import { Order } from '../models/order';
 import { UserServiceService } from '../services/user-service.service';
-import * as uuid from "uuid";
-import { User } from '../models/user';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Trade } from '../models/trade';
 import { TradeHisService } from '../services/trade-his.service';

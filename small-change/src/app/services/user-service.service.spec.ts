@@ -34,33 +34,45 @@ describe('UserServiceService', () => {
   });
 
   it('should login successful for esisting user', fakeAsync( ()=>{
-    service.users=testData;
+    //service.users=testData;
     console.log(service.users)
 
     let resp=false;
     service.authenticateUser('testSER@email.com','Nikhil1@123').subscribe(data => resp=data)
 
-    const req=httpController.expectOne('http://localhost:3000/fmts/client')
+    const req=httpController.expectOne('http://localhost:8080/clients/login')
     expect(req.request.method).toBe('POST')
     req.flush({
-      ...service.users[0],
+      ...testData[0],
       token:87656789,
       clientId:87556789
     })
     httpController.verify()
     tick()
     expect(resp).toBe(true);
-    expect(service.users[0].clientId).toBe(87556789)
+    expect(service.getLoginUserId).toBe(87556789)
   }))
 
   it('should return false while authenticating with incorrect password', fakeAsync( ()=>{
-    service.users=testData
-    let resp=true;
-    service.authenticateUser('testSER@email.com','Nikhil1@1234').subscribe(data=> resp=data)
-    httpController.expectNone('http://localhost:3000/fmts/client')
+    //service.users=testData
+    let errorMessage=""
+    service.authenticateUser('testSER@email.com','Nikhil1@1234').subscribe(
+      {next:data=> fail("should not excute"),
+      error:(err)=>errorMessage=err})
+
+    const req=httpController.expectOne('http://localhost:8080/clients/login')
+    expect(req.request.method).toBe('POST')
+
+    req.flush(400,{
+      status:400,
+      statusText:'Incorrect Credentials'
+    })
+
     httpController.verify()
     tick()
-    expect(resp).toBe(false);
+
+    expect(errorMessage!="").toBeTruthy();
+
   }))
 
   // it('should create new user on non existing user registration', fakeAsync( ()=>{

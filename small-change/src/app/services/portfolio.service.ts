@@ -7,6 +7,7 @@ import { Portfolio } from '../models/portfolio';
 import { Stock } from '../models/stock';
 import { NgbTimeStructAdapter } from '@ng-bootstrap/ng-bootstrap/timepicker/ngb-time-adapter';
 import { InstrumentPrice } from '../models/instrument-price';
+import { UserServiceService } from './user-service.service';
 
 
 
@@ -50,10 +51,15 @@ export class PortfolioService {
     },
   ]
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient,private clientService:UserServiceService) { }
 
   getPortfolioData(): Observable<Portfolio[]> {
-    return this.http.get<any[]>(`${this.portfolioUrl}/client/1728765503`)
+
+
+    let httpHeaders=new HttpHeaders()
+    httpHeaders= httpHeaders.append('Authorization',`Bearer ${this.clientService.getLogedInUserToken()}`)
+
+    return this.http.get<any[]>(`${this.portfolioUrl}/client`,{headers:httpHeaders})
       .pipe(
         catchError(this.handleError),
         switchMap((serverPortfolioData:any[],index:number)=>{
@@ -335,6 +341,23 @@ export class PortfolioService {
 
     return throwError(() => errorMessage);
 
+  }
+
+  createNewDefaultPortfolio():Observable<Portfolio>{
+    let httpHeaders=new HttpHeaders()
+    httpHeaders= httpHeaders.append('Authorization',`Bearer ${this.clientService.getLogedInUserToken()}`)
+
+    return this.http.post<any>(`${this.portfolioUrl}/client/default`,{headers:httpHeaders})
+      .pipe(
+        catchError(this.handleError),
+        switchMap((serverPortfolio:any,index:number)=>{
+
+            const resp:Portfolio= new Portfolio(serverPortfolio.portfolioId,serverPortfolio.clientId,
+              serverPortfolio.portfolioTypeName, serverPortfolio.portfolioName ,
+              serverPortfolio.balance,[]);
+              return of(resp);
+          })
+      );
   }
 
 
