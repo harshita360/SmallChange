@@ -11,7 +11,8 @@ import { TradeHisService } from '../services/trade-his.service';
 })
 export class TradeService {
 
-  private tradeUrl:string="http://localhost:3000/fmts/trades/trade"
+  private tradeUrl:string="http://localhost:3000/fmts/trades/trade";
+  private tradeUrlnew:string="http://localhost:8080/trade";
 
   constructor(private userService:UserServiceService,private http:HttpClient, private activityService:TradeHisService) {
    }
@@ -20,21 +21,24 @@ export class TradeService {
     const userId=this.userService.getLoginUserId()
     if(userId){
       order.setClientId(userId);
-      const oderData={
-        ...order,
-        email: this.userService.getLoginUserEmail(),
-        clientId:userId,
-        token:this.userService.getLogedInUserToken()
-      }
-      console.log(order)
-      const httpHeaders=new HttpHeaders({
-        'Content-type':'application/json'
-      })
-      return this.http.post<Trade>(this.tradeUrl,oderData,{headers:httpHeaders})
+      // const oderData={
+      //   ...order,
+      //   email: this.userService.getLoginUserEmail(),
+      //   clientId:userId,
+      //   token:this.userService.getLogedInUserToken()
+      // }
+      console.log(order);
+      let httpHeaders=new HttpHeaders()
+      httpHeaders= httpHeaders.append('Authorization',`Bearer ${this.userService.getLogedInUserToken()}`)
+  
+      // const httpHeaders=new HttpHeaders({
+      //   'Content-type':'application/json',
+      //   'Authorization':`Bearer ${this.userService.getLogedInUserToken}`
+      // })
+      return this.http.post<Trade>(this.tradeUrlnew,order,{headers:httpHeaders})
       .pipe(
         catchError(this.handleError),
-        tap((data)=>{ data.transactionAt=new Date(Date.now())  ;this.activityService.addTradeHis(data)}))
-
+      )
     }else{
       return throwError(()=>'Please re login to buy a instrument')
     }
@@ -42,6 +46,7 @@ export class TradeService {
   }
 
   handleError(error:HttpErrorResponse){
+    console.log(error);
     if(error.error instanceof ErrorEvent){
       console.error("Error occured ",error.error.message)
     }else{

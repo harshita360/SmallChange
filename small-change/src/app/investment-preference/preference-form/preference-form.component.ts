@@ -24,9 +24,10 @@ export class PreferenceFormComponent implements OnInit {
       'riskTolerance':['',Validators.required],
       'incomeCategory':['',Validators.required]
     })
-    this.preferenceService.getInvestmentPreferenceOfuser().subscribe({next:data=>{
+    this.preferenceService.getInvestmentPreferenceOfuser().subscribe({next:(data)=>{
       if(data!=undefined){
-        this.preferenceForm.setValue(data)
+        console.log(data);
+        this.preferenceForm.patchValue(data)
       }
     },
     error:(e)=>{ this.toastService.showError(e) }

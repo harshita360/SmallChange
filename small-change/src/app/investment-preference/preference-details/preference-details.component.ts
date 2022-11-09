@@ -13,6 +13,21 @@ export class PreferenceDetailsComponent implements OnInit {
 
   currentUserInvestment?:InvestmentPreference;
 
+  incomeCategoryMapping:{[key:string]:String}={
+    "BASIC":"0 - 20,000",
+    "LOW":"20,001 - 40,000",
+	  "MEDIUM":" 40,001 - 60,000",
+	  "HIGH":" 60,001 - 80,000",
+    "EXTREME":" 80,001+"
+  }
+
+  lengthOfInvestmentMapping:{[key:string]:String}={
+    "BASIC":" 0-5 years",
+    "LOW":"5-7 years0",
+	  "MEDIUM":" 7-10 years",
+	  "HIGH":"  10-15 years",
+  }
+
   constructor(private preferenceService:PreferenceService,private router:Router,
     private toastService:ToastService) {
    }
