@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { catchError, map, mergeMap, Observable, of, throwError } from 'rxjs';
+import { catchError, map, merge, mergeMap, Observable, of, throwError } from 'rxjs';
 import { User } from '../models/user';
 import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { ClientIdentification } from '../models/client-identification';
@@ -11,7 +11,7 @@ export class UserServiceService {
 
   //private clientUrl="http://localhost:3000/fmts/client"
   private clientUrl="http://localhost:8080/clients/login"
-
+  private registerUrl="http://localhost:8080/clients/register"
   users:User[]=[
     new User(
       NaN,
@@ -19,6 +19,7 @@ export class UserServiceService {
       new Date('1999-09-11'),
       'IN',
       '560061',
+      '1234567890',
       'Nikhil@123',
       'Nikhil V',
       [{type:'SSN',value:'87698765'}]
@@ -29,6 +30,7 @@ export class UserServiceService {
       new Date('2000-09-11'),
       'IN',
       '560061',
+      '1234567890',
       'Nikhil@123',
       'Nikhil V 2',
       [{type:'SSN',value:'09456433'}]
@@ -85,7 +87,7 @@ export class UserServiceService {
     //       }
     //       return of(false)
     //     })
-    //   )
+    //   ,,,,,,,,,,,,,,)
     // }else{
     //   return of(false);
     // }
@@ -95,12 +97,13 @@ export class UserServiceService {
       })
 
     let postData={"email":email,"password":password}
-
+    
+    //Client
     return this.http.post<any>(`${this.clientUrl}`,postData,{ "headers": httpHeaders})
     .pipe(
       mergeMap((clientData)=>{
         let user:User;
-        user=new User(clientData.clientID,email,new Date(),"","","",clientData.userName,[]);
+        user=new User(clientData.clientID,email,new Date(),"","","","",clientData.userName,[]);
         user.setToken(clientData.token)
         this.loggedInUser=user
         return of(true);
@@ -115,13 +118,29 @@ export class UserServiceService {
   }
 
   registerNewUser(user: User):  Observable<User> {
-    const existinUser=this.users.find(u => u.email===user.email);
-    if(existinUser){
-      return throwError(()=> 'Already user with is email present')
-    }
-    // const httpHeaders = new HttpHeaders({
-    //   'Content-type':'application/json'
-    // })
+    // const existinUser=this.users.find(u => u.email===user.email);
+    // if(existinUser){
+    //   return throwError(()=> 'Already user with is email present')
+    // }
+    const httpHeaders = new HttpHeaders({
+      'Content-type':'application/json'
+    });
+    let postData = {
+      "name": user.userName,
+      "email" : user.email,
+      "password" : user.password,
+      "postalCode" : user.postalCode,
+      "phone": user.phone,
+      "country" : user.country,
+      "dateOfBirth": user.dateOfBirth,
+      "clientIdentification" : {
+        "type": user.identification[0].type,
+        "value":user.identification[0].value
+      },
+      "investmentRiskAppetite": "CONSERVATIVE",
+    };
+    return this.http.post<User>(`${this.registerUrl}`,postData,{ "headers": httpHeaders})
+    .pipe(catchError(this.handleError));
     // let user: User;
     // //user1: User[]= new User(NaN,email,dob,country,postalCode,password,userName,identification);
     // return this.http.post<User>(this.clientUrl,,{headers:httpHeaders1})
@@ -139,11 +158,11 @@ export class UserServiceService {
     //       }
     //     })
     // user.clientId=Math.floor(Math.random()*1000000)
-    console.log(user);
-    this.users.push(user);
-    console.log(this.users);
-    //this.updateData()
-    return of(user)
+    // console.log(user);
+    // this.users.push(user);
+    // console.log(this.users);
+    // //this.updateData()
+    // return of(user)
 
   }
 

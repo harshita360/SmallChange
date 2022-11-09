@@ -25,6 +25,7 @@ export class RegisterationComponent implements OnInit {
   dob: Date = new Date();
   country: string = '';
   postalCode: string = '';
+  phone: string = '';
   password: string = '';
   userName: string = '';
   identification: ClientIdentification[] = [];
@@ -36,6 +37,7 @@ export class RegisterationComponent implements OnInit {
         'dob': ['',Validators.required],
         'country': ['',Validators.required],
         'postalCode': ['',Validators.required],
+        'phone': ['',Validators.required],
         'password': ['',Validators.required],
         'userName': ['',Validators.required],
         'identification_type': ['',Validators.required],
@@ -51,6 +53,7 @@ export class RegisterationComponent implements OnInit {
       this.registrationForm.get('dob')?.value,
       this.registrationForm.get('country')?.value,
       this.registrationForm.get('postalCode')?.value,
+      this.registrationForm.get('phone')?.value,
       this.registrationForm.get('password')?.value,
       this.registrationForm.get('userName')?.value,
       [new ClientIdentification(this.registrationForm.get('identification_type')?.value, this.registrationForm.get('identification_value')?.value)]
