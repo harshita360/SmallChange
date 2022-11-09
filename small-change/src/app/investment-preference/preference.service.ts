@@ -1,5 +1,6 @@
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { catchError, Observable, of, throwError } from 'rxjs';
 import { InvestmentPreference } from '../models/investment-preference';
 import { UserServiceService } from '../services/user-service.service';
 
@@ -8,7 +9,9 @@ import { UserServiceService } from '../services/user-service.service';
 })
 export class PreferenceService {
 
-  constructor(private userService:UserServiceService){}
+  constructor(private clientService:UserServiceService,private httpClient:HttpClient){}
+
+  private preferenceUrl="http://localhost:8080/preference"
 
   private investmentPreference: {[key:string]:InvestmentPreference}={
     '123-123-123':{
@@ -20,19 +23,39 @@ export class PreferenceService {
   }
 
   public setInestmentPreference(preference:InvestmentPreference): Observable<InvestmentPreference|undefined> {
-    const userId=this.userService.getLoginUserId()
-    if(userId!=undefined){
-      this.investmentPreference[userId]=preference
-      return of(preference)
-    }
-    return of(undefined)
+    let httpHeaders=new HttpHeaders()
+    httpHeaders= httpHeaders.append('Authorization',`Bearer ${this.clientService.getLogedInUserToken()}`)
+
+    return this.httpClient.post<InvestmentPreference>(`${this.preferenceUrl}/updatepref`,preference,{headers:httpHeaders})
+      .pipe(
+        catchError(this.handleError));
   }
 
   public getInvestmentPreferenceOfuser() : Observable<InvestmentPreference|undefined>{
-    const userId=this.userService.getLoginUserId()
-    if(userId!=undefined){
-      return of(this.investmentPreference[userId])
+    let httpHeaders=new HttpHeaders()
+    httpHeaders= httpHeaders.append('Authorization',`Bearer ${this.clientService.getLogedInUserToken()}`)
+
+    return this.httpClient.get<InvestmentPreference>(`${this.preferenceUrl}`,{headers:httpHeaders})
+      .pipe(
+        catchError(this.handleError));
+  }
+
+  handleError(err: HttpErrorResponse) {
+    let errorMessage = '';
+    if (err.error instanceof ErrorEvent) {
+
+      errorMessage = `An error occured: ${err.error.message}`;
     }
-    return of(undefined)
+
+    else {
+
+      errorMessage = `server returned code: ${err.status},error message is :${err.message}`;
+
+    }
+
+    console.log(errorMessage);
+
+    return throwError(() => errorMessage);
+
   }
 }

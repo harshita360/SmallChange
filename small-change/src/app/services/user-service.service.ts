@@ -10,7 +10,7 @@ import { ClientIdentification } from '../models/client-identification';
 export class UserServiceService {
 
   //private clientUrl="http://localhost:3000/fmts/client"
-  private clientUrl="http://localhost:8080/clients/login"
+  private clientUrl="http://localhost:8080/clients"
 
   users:User[]=[
     new User(
@@ -96,7 +96,7 @@ export class UserServiceService {
 
     let postData={"email":email,"password":password}
 
-    return this.http.post<any>(`${this.clientUrl}`,postData,{ "headers": httpHeaders})
+    return this.http.post<any>(`${this.clientUrl}/login`,postData,{ "headers": httpHeaders})
     .pipe(
       mergeMap((clientData)=>{
         let user:User;
@@ -116,10 +116,6 @@ export class UserServiceService {
   }
 
   registerNewUser(user: User):  Observable<User> {
-    const existinUser=this.users.find(u => u.email===user.email);
-    if(existinUser){
-      return throwError(()=> 'Already user with is email present')
-    }
     // const httpHeaders = new HttpHeaders({
     //   'Content-type':'application/json'
     // })
@@ -140,11 +136,18 @@ export class UserServiceService {
     //       }
     //     })
     // user.clientId=Math.floor(Math.random()*1000000)
-    console.log(user);
-    this.users.push(user);
-    console.log(this.users);
+    // console.log(user);
+    // this.users.push(user);
+    // console.log(this.users);
     //this.updateData()
-    return of(user)
+
+    const httpHeaders=new HttpHeaders({
+      'Content-type':'application/json'
+    })
+    return this.http.post<User>(`${this.clientUrl}/register`,user,{ "headers": httpHeaders})
+    .pipe(
+      catchError(this.handleError));
+
 
   }
 
