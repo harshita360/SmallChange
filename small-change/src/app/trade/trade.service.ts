@@ -27,11 +27,14 @@ export class TradeService {
       //   clientId:userId,
       //   token:this.userService.getLogedInUserToken()
       // }
-      console.log(order)
-      const httpHeaders=new HttpHeaders({
-        'Content-type':'application/json',
-        'Authorization':`Bearer ${this.userService.getLogedInUserToken}`
-      })
+      console.log(order);
+      let httpHeaders=new HttpHeaders()
+      httpHeaders= httpHeaders.append('Authorization',`Bearer ${this.userService.getLogedInUserToken()}`)
+  
+      // const httpHeaders=new HttpHeaders({
+      //   'Content-type':'application/json',
+      //   'Authorization':`Bearer ${this.userService.getLogedInUserToken}`
+      // })
       return this.http.post<Trade>(this.tradeUrlnew,order,{headers:httpHeaders})
       .pipe(
         catchError(this.handleError),
@@ -43,6 +46,7 @@ export class TradeService {
   }
 
   handleError(error:HttpErrorResponse){
+    console.log(error);
     if(error.error instanceof ErrorEvent){
       console.error("Error occured ",error.error.message)
     }else{
