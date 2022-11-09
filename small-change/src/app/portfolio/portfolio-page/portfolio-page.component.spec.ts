@@ -1,6 +1,5 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
-import { UpdateCallback } from '@popperjs/core';
 import { of } from 'rxjs';
 import { PortfolioService } from 'src/app/services/portfolio.service';
 
@@ -16,15 +15,17 @@ describe('PortfolioPageComponent', () => {
       "user_id" : 1,
       "portfolio_category":"BROKERAGE",
       "portfolio_name":"Demo portfolio",
-      "stocks":[ 
-          { "id":1, "instrumentId": 28738384, "instrument_codename":"APL", "quantity":450, "value":89000, "price":776,"change":-4.07},
+      "stocks":[
+          { "id":1, "instrumentId": "APL", "instrument_codename":"APL", "quantity":450, "value":89000, "price":776,"change":-4.07},
           { "id":2, "instrumentId": 87738384, "instrument_codename":"AMZ","quantity":450, "value":89000, "price":776, "change":10.99}
       ],
       "portfolio_balance":100000}
   ]
   let stockspy:null;
-  MockPortfolioService=jasmine.createSpyObj('PortfolioService',['getPortfolioData']);
-  stockspy=MockPortfolioService.getPortfolioData.and.returnValue(of(mockportfolio));
+  MockPortfolioService=jasmine.createSpyObj('PortfolioService',['getPortfolioDataNew','createNewDefaultPortfolio']);
+  stockspy=MockPortfolioService.getPortfolioDataNew.and.returnValue(of(mockportfolio));
+  MockPortfolioService.createNewDefaultPortfolio.and.returnValue(of(mockportfolio[0]));
+
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -37,7 +38,7 @@ describe('PortfolioPageComponent', () => {
     fixture.detectChanges();
   });
 
- 
+
 
   it('should create', () => {
     expect(component).toBeTruthy();
@@ -49,16 +50,29 @@ describe('PortfolioPageComponent', () => {
 });
 
 it('should return right table content',()=>{
-  
+
+  component.ngOnInit()
+  fixture.detectChanges()
   const compiled = fixture.debugElement.nativeElement;
-    const table = compiled.querySelector('table table');
-  expect(table.rows[1].cells[1].textContent).toBe('APL');
+    const table = compiled.querySelector('table');
+    //console.log(table)
+  expect(table.rows[1].cells[0].textContent).toBe('APL');
 })
 
 it('should call the portfolio service to fetch the data', () => {
   component.getUserPortfolioData();
-  expect(stockspy).toHaveBeenCalled(); 
+  expect(stockspy).toHaveBeenCalled();
 });
+
+it("shoud show create default portfolio button on no user portfolios",fakeAsync(()=>{
+  MockPortfolioService.getPortfolioDataNew.and.returnValue(of([]));
+  component.ngOnInit()
+  fixture.detectChanges()
+  const createButton=fixture.debugElement.query(By.css('#create-button'))
+
+  expect(createButton!=undefined).toBeTruthy();
+
+}))
 
 
 });
