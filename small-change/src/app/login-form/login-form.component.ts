@@ -27,7 +27,9 @@ export class LoginFormComponent implements OnInit {
   login(){
 
     this.userService.authenticateUser(this.loginForm.get('username')?.value,
-    this.loginForm.get('password')?.value).subscribe(data=>{
+    this.loginForm.get('password')?.value).subscribe({
+      next:
+      (data)=>{
       if(data){
         this.errorMessage=''
         this.router.navigate(['/portfolio']);
@@ -35,7 +37,10 @@ export class LoginFormComponent implements OnInit {
         this.errorMessage='User Name or password wrong'
         //alert('User Name or password wrong')
       }
-    })
+    },
+    error:(err)=>{ this.errorMessage='User Name or password wrong' }
+
+  })
   }
   register(){
     this.router.navigate(['/register']);

@@ -347,7 +347,7 @@ export class PortfolioService {
     let httpHeaders=new HttpHeaders()
     httpHeaders= httpHeaders.append('Authorization',`Bearer ${this.clientService.getLogedInUserToken()}`)
 
-    return this.http.post<any>(`${this.portfolioUrl}/client/default`,{headers:httpHeaders})
+    return this.http.post<Portfolio>(`${this.portfolioUrl}/client/default`,null,{headers:httpHeaders})
       .pipe(
         catchError(this.handleError),
         switchMap((serverPortfolio:any,index:number)=>{

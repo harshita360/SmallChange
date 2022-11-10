@@ -23,7 +23,7 @@ export class PreferenceDetailsComponent implements OnInit {
 
   lengthOfInvestmentMapping:{[key:string]:String}={
     "BASIC":" 0-5 years",
-    "LOW":"5-7 years0",
+    "LOW":"5-7 years",
 	  "MEDIUM":" 7-10 years",
 	  "HIGH":"  10-15 years",
   }

@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { UserServiceService } from '../services/user-service.service';
-
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PreferenceService } from './preference.service';
 
 describe('PreferenceService', () => {
@@ -10,6 +10,7 @@ describe('PreferenceService', () => {
   beforeEach(() => {
     mockUserService=jasmine.createSpyObj(['getLoginUserId'])
     TestBed.configureTestingModule({
+      imports:[HttpClientTestingModule],
       providers:[{provide:UserServiceService, useValue:mockUserService}]
     });
     service = TestBed.inject(PreferenceService);

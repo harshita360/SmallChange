@@ -18,16 +18,16 @@
                         <div class="card-body">
                           <div class="value-box" style="background-color: green;" >
                             <label class="form-label">Current Balance</label>
-                            {{item.portfolio_balance}}
+                            {{item.portfolio_balance | number:".3"}}
                           </div>
                           <div class="value-box" style="background-color:blue;"  >
 
                             <label class="form-label">Total Investment Value</label>
-                            {{item.totalInvestmentPrice}}
+                            {{item.totalInvestmentPrice |  number:".3"}}
                           </div>
                           <div class="value-box" [ngStyle]=" { 'background-color': (item.totalSharesWorth>item.totalInvestmentPrice)?'Green':'Red' } "   >
                             <label class="form-label">Returns On Investment</label>
-                            {{item.totalSharesWorth}}</div>
+                            {{item.totalSharesWorth |  number:".3"}}</div>
                         </div>
                         <div class="card-body  table-responsive">
                         <table style="width: 100%;" class="table table-dark table-striped" id="stocktable">
@@ -48,7 +48,7 @@
                                 <td>{{elem.id}}</td>
                                 <td>{{elem.quantity}}</td>
                                 <td >{{elem.price|currency}}</td>
-                                <td [ngClass]="{positive:elem.change>0,negative:elem.change<=0}">{{elem.change}}%<i class="bi bi-arrow-up-circle"></i></td>
+                                <td [ngClass]="{positive:elem.change>0,negative:elem.change<=0}">{{elem.change | number:".3"}}%<i class="bi bi-arrow-up-circle"></i></td>
                                 <td>{{elem.value|currency}}</td>
                                 <td>
                                   <a class="btn btn-success" [routerLink]="['/trade',item.portfolio_id,'B',elem.instrumentId]">BUY TRADE</a>
@@ -70,7 +70,7 @@
 
 
     <div *ngIf="length==0">
-      <button id="create-button" class="btn btn-success">Create My FirstPortfolio</button>
+      <button (click)="createClientDefaultPortfolio()" id="create-button" class="btn btn-success">Create My FirstPortfolio</button>
     </div>
 </div>
 <!-- <a [routerLink]="['/trade','1111','B','T678900']">BUY TRADE</a>

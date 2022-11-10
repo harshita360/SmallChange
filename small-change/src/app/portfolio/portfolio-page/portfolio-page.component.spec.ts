@@ -49,15 +49,16 @@ describe('PortfolioPageComponent', () => {
 .toContain('Portfolio');
 });
 
-it('should return right table content',()=>{
+it('should return right table content',fakeAsync(()=>{
 
   component.ngOnInit()
   fixture.detectChanges()
   const compiled = fixture.debugElement.nativeElement;
     const table = compiled.querySelector('table');
     //console.log(table)
+    fixture.detectChanges()
   expect(table.rows[1].cells[0].textContent).toBe('APL');
-})
+}));
 
 it('should call the portfolio service to fetch the data', () => {
   component.getUserPortfolioData();

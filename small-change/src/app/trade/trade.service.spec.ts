@@ -35,17 +35,10 @@ describe('TradeService', () => {
     service.buyAInstrument(order).subscribe(expecutedOrder=>{
       respOrder=expecutedOrder
     })
-    const req=httpController.expectOne('http://localhost:3000/fmts/trades/trade')
+    const req=httpController.expectOne('http://localhost:8080/trade')
     expect(req.request.method).toBe('POST')
 
-    const expectedBody={
-      ...order,
-      clientId:mockUserService.getLoginUserId(),
-      email:mockUserService.getLoginUserEmail(),
-      token:mockUserService.getLogedInUserToken()
-    }
-
-    expect(req.request.body).toEqual(expectedBody)
+    expect(req.request.body).toEqual(order)
 
     req.flush({
       "tradeId": "a62375d7-bcb4-46a1-b2f0-5ba6719ae9b5",
@@ -73,17 +66,11 @@ describe('TradeService', () => {
       error: (e)=> errorMessage=e
     })
 
-    const req=httpController.expectOne('http://localhost:3000/fmts/trades/trade')
+    const req=httpController.expectOne('http://localhost:8080/trade')
     expect(req.request.method).toBe('POST')
 
-    const expectedBody={
-      ...order,
-      clientId:mockUserService.getLoginUserId(),
-      email:mockUserService.getLoginUserEmail(),
-      token:mockUserService.getLogedInUserToken()
-    }
 
-    expect(req.request.body).toEqual(expectedBody)
+    expect(req.request.body).toEqual(order)
 
     req.flush('Timeout',{
       status:406,
@@ -95,35 +82,35 @@ describe('TradeService', () => {
     expect(errorMessage).toBe('Session timed out, lease login to get services')
   }))
 
-  it('should throw error on 5% variation in price ', fakeAsync( ()=>{
-    //mockUserService.getLoginUserId.and.returnValue(undefined)
-    const order=new Order('123455',4,4.5,'123','B');
-    let errorMessage:string='';
-    service.buyAInstrument(order).subscribe({
-      next:() =>fail('should not be'),
-      error: (e)=> errorMessage=e
-    })
+  // it('should throw error on 5% variation in price ', fakeAsync( ()=>{
+  //   //mockUserService.getLoginUserId.and.returnValue(undefined)
+  //   const order=new Order('123455',4,4.5,'123','B');
+  //   let errorMessage:string='';
+  //   service.buyAInstrument(order).subscribe({
+  //     next:() =>fail('should not be'),
+  //     error: (e)=> errorMessage=e
+  //   })
 
-    const req=httpController.expectOne('http://localhost:3000/fmts/trades/trade')
-    expect(req.request.method).toBe('POST')
+  //   const req=httpController.expectOne('http://localhost:3000/fmts/trades/trade')
+  //   expect(req.request.method).toBe('POST')
 
-    const expectedBody={
-      ...order,
-      clientId:mockUserService.getLoginUserId(),
-      email:mockUserService.getLoginUserEmail(),
-      token:mockUserService.getLogedInUserToken()
-    }
+  //   const expectedBody={
+  //     ...order,
+  //     clientId:mockUserService.getLoginUserId(),
+  //     email:mockUserService.getLoginUserEmail(),
+  //     token:mockUserService.getLogedInUserToken()
+  //   }
 
-    expect(req.request.body).toEqual(expectedBody)
+  //   expect(req.request.body).toEqual(expectedBody)
 
-    req.flush('Price change',{
-      status:409,
-      statusText:'Price change'
-    })
-    httpController.verify()
+  //   req.flush('Price change',{
+  //     status:409,
+  //     statusText:'Price change'
+  //   })
+  //   httpController.verify()
 
-    tick()
-    expect(errorMessage).toBe('The trade price was changed more than 5%, please review order')
-  }))
+  //   tick()
+  //   expect(errorMessage).toBe('The trade price was changed more than 5%, please review order')
+  // }))
 
 });

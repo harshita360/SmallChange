@@ -35,9 +35,9 @@ describe('PreferenceDetailsComponent', () => {
     mockpreferenceService.getInvestmentPreferenceOfuser.and.returnValue(
       of({
         investmentPurpose:'Retirement',
-        incomeCategory:'20,001 - 40,000',
+        incomeCategory:'LOW',
         riskTolerance:'CONSERVATIVE',
-        lengthOfInvestment:'5-7 years'
+        lengthOfInvestment:'LOW'
       }))
   });
 
@@ -55,9 +55,9 @@ describe('PreferenceDetailsComponent', () => {
     mockpreferenceService.getInvestmentPreferenceOfuser.and.returnValue(
       of({
         investmentPurpose:'Retirement',
-        incomeCategory:'20,001 - 40,000',
+        incomeCategory:'BASIC',
         riskTolerance:'CONSERVATIVE',
-        lengthOfInvestment:'5-7 years'
+        lengthOfInvestment:'LOW'
       }))
       component.ngOnInit()
       const paras=fixture.debugElement.queryAll(By.css('p'))

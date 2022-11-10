@@ -15,6 +15,7 @@ describe('UserServiceService', () => {
       new Date('1999-09-11'),
       'IN',
       '560061',
+      '8767565609',
       'Nikhil1@123',
       'Nikhil V',
       [{type:'SSN',value:'87698765'}]
@@ -50,7 +51,7 @@ describe('UserServiceService', () => {
     httpController.verify()
     tick()
     expect(resp).toBe(true);
-    expect(service.getLoginUserId).toBe(87556789)
+    expect(service.getLoginUserId()).toBe(87556789)
   }))
 
   it('should return false while authenticating with incorrect password', fakeAsync( ()=>{
